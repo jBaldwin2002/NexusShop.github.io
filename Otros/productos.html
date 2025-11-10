@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos | HogarExpress</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <!-- Feather icons: keep single, minified CDN -->
+    <style>
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #7e22ce 100%);
+        }
+        .cart-badge {
+            top: -10px;
+            right: -10px;
+        }
+        .add-to-cart.added {
+            background-color: #10b981 !important;
+            color: white !important;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .cart-item-remove {
+            transition: all 0.3s ease;
+        }
+        .cart-item-remove:hover {
+            transform: scale(1.1);
+            color: #ef4444;
+        }
+        .category-filter.active {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .filter-sidebar {
+            transition: all 0.3s ease;
+        }
+        .price-range {
+            background: linear-gradient(to right, #4f46e5, #7e22ce);
+        }
+        .stock-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+        }
+        .quick-view:hover {
+            transform: scale(1.05);
+        }
+        .wishlist-btn:hover {
+            color: #ef4444;
+        }
+        .category-tag {
+            display: inline-block;
+            background-color: #e0e7ff;
+            color: #4f46e5;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Modal de Login -->
+    <div id="loginModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-content">
+            <div class="bg-indigo-600 text-white p-6 rounded-t-lg">
+                <h2 class="text-2xl font-bold">Iniciar Sesión</h2>
+                <button id="closeLogin" type="button" aria-label="Cerrar" class="absolute top-4 right-4 text-white hover:text-gray-200">
+                    <i data-feather="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" required 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                        <input type="password" id="password" required 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <button type="submit" 
+                            class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-200">
+                        Iniciar Sesión
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-600">¿No tienes cuenta? <a href="#" class="text-indigo-600 hover:underline">Regístrate</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal del Carrito -->
+    <div id="cartModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-content">
+            <div class="bg-indigo-600 text-white p-6 rounded-t-lg">
+                <h2 class="text-2xl font-bold">🛒 Mi Carrito</h2>
+                <button id="closeCart" type="button" aria-label="Cerrar" class="absolute top-4 right-4 text-white hover:text-gray-200">
+                    <i data-feather="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-6 max-h-96 overflow-y-auto">
+                <div id="cartItems" class="space-y-4">
+                    <!-- Los items del carrito se cargarán aquí dinámicamente -->
+                </div>
+                <div id="emptyCart" class="text-center py-8">
+                    <i data-feather="shopping-cart" class="w-16 h-16 text-gray-300 mx-auto mb-4"></i>
+                    <p class="text-gray-500">Tu carrito está vacío</p>
+                </div>
+            </div>
+            <div class="border-t p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-semibold">Total:</span>
+                    <span id="cartTotal" class="text-xl font-bold text-indigo-600">$0</span>
+                </div>
+                <div id="shippingInfo" class="text-green-600 text-sm mb-4 hidden">
+                    🚚 ¡Envío gratis aplicado!
+                </div>
+                <button id="checkoutBtn" 
+                        class="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Proceder al Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center">
+                        <i data-feather="home" class="text-indigo-600"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900">HogarExpress</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../Main.html" class="text-gray-700 hover:text-indigo-600 transition">Inicio</a>
+                    <a href="contacto.html" class="text-gray-700 hover:text-indigo-600 transition">Contacto</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 rounded-full hover:bg-gray-100">
+                        <i data-feather="search" class="text-gray-600"></i>
+                    </button>
+                    <button id="cartButton" class="p-2 rounded-full hover:bg-gray-100 relative">
+                        <i data-feather="shopping-cart" class="text-gray-600"></i>
+                        <span class="cart-badge absolute bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                        <button id="loginButton" type="button" class="p-2 rounded-full hover:bg-gray-100">
+                        <i data-feather="user" class="text-gray-600"></i>
+                    </button>
+                    <button class="md:hidden p-2 rounded-full hover:bg-gray-100">
+                        <i data-feather="menu" class="text-gray-600"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section Productos -->
+    <section class="hero-gradient text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" data-aos="fade-up">Nuestros Productos</h1>
+                <p class="text-xl mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                    Descubre la mejor selección de productos para tu hogar. Calidad garantizada y precios increíbles.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="relative">
+                        <input type="text" placeholder="Buscar productos..." 
+                               class="pl-10 pr-4 py-3 rounded-lg text-gray-900 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <i data-feather="search" class="absolute left-3 top-3.5 text-gray-400 w-5 h-5"></i>
+                    </div>
+                    <button class="bg-white text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg">
+                        Buscar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filtros y Ordenamiento -->
+    <section class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center py-6 gap-4">
+                <!-- Filtros Móvil -->
+                <div class="lg:hidden w-full">
+                    <button id="mobileFilterBtn" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center justify-center">
+                        <i data-feather="filter" class="w-4 h-4 mr-2"></i>
+                        Filtros y Ordenamiento
+                    </button>
+                </div>
+
+                <!-- Resultados y Ordenamiento -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full lg:w-auto gap-4">
+                    <div class="text-gray-600">
+                        Mostrando <span class="font-semibold" id="productCount">48</span> productos
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option>Ordenar por: Destacados</option>
+                            <option>Precio: Menor a Mayor</option>
+                            <option>Precio: Mayor a Menor</option>
+                            <option>Mejor Calificados</option>
+                            <option>Más Vendidos</option>
+                            <option>Novedades</option>
+                        </select>
+
+                        <div class="hidden sm:flex gap-2">
+                            <button class="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                                <i data-feather="grid" class="w-5 h-5 text-gray-600"></i>
+                            </button>
+                            <button class="p-2 border border-indigo-600 bg-indigo-50 rounded-lg">
+                                <i data-feather="list" class="w-5 h-5 text-indigo-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenido Principal -->
+    <section id="productos" class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar de Filtros -->
+                <div class="lg:w-1/4 filter-sidebar">
+                    <div class="bg-white rounded-lg shadow-sm p-6 sticky top-24">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900">Filtros</h3>
+                            <button class="text-indigo-600 text-sm hover:text-indigo-700">Limpiar todo</button>
+                        </div>
+
+                        <!-- Filtro por Categoría -->
+                        <div class="mb-6">
+                            <h4 class="font-medium text-gray-900 mb-3">Categorías</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500" data-category="muebles">
+                                    <span class="ml-2 text-gray-700">Muebles</span>
+                                    <span class="ml-auto text-gray-500 text-sm">(12)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500" data-category="cocina">
+                                    <span class="ml-2 text-gray-700">Cocina</span>
+                                    <span class="ml-auto text-gray-500 text-sm">(10)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500" data-category="dormitorio">
+                                    <span class="ml-2 text-gray-700">Dormitorio</span>
+                                    <span class="ml-auto text-gray-500 text-sm">(8)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500" data-category="decoracion">
+                                    <span class="ml-2 text-gray-700">Decoración</span>
+                                    <span class="ml-auto text-gray-500 text-sm">(9)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500" data-category="iluminacion">
+                                    <span class="ml-2 text-gray-700">Iluminación</span>
+                                    <span class="ml-auto text-gray-500 text-sm">(6)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500" data-category="textiles">
+                                    <span class="ml-2 text-gray-700">Textiles</span>
+                                    <span class="ml-auto text-gray-500 text-sm">(7)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Filtro por Precio -->
+                        <div class="mb-6">
+                            <h4 class="font-medium text-gray-900 mb-3">Rango de Precio</h4>
+                            <div class="space-y-4">
+                                <div class="price-range h-2 rounded-full"></div>
+                                <div class="flex justify-between text-sm text-gray-600">
+                                    <span>$50.000</span>
+                                    <span>$3'000.000</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filtro por Marca -->
+                        <div class="mb-6">
+                            <h4 class="font-medium text-gray-900 mb-3">Marcas</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                    <span class="ml-2 text-gray-700">HomeStyle</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                    <span class="ml-2 text-gray-700">ComfortLiving</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                    <span class="ml-2 text-gray-700">EcoHome</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                    <span class="ml-2 text-gray-700">ModernHouse</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Filtro por Calificación -->
+                        <div class="mb-6">
+                            <h4 class="font-medium text-gray-900 mb-3">Calificación</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                    <span class="ml-2 flex text-yellow-400">
+                                        <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                    </span>
+                                    <span class="ml-2 text-gray-500 text-sm">(128)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                    <span class="ml-2 flex text-yellow-400">
+                                        <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-feather="star" class="w-4 h-4 fill-current text-gray-300"></i>
+                                    </span>
+                                    <span class="ml-2 text-gray-500 text-sm">(324)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Filtro por Ofertas -->
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                <span class="ml-2 text-gray-700">Solo productos en oferta</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Banner Promocional -->
+                    <div class="mt-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-6 text-white text-center">
+                        <h4 class="font-semibold mb-2">¡Envío Gratis!</h4>
+                        <p class="text-sm mb-3">En compras mayores a $150.000</p>
+                        <button class="bg-white text-indigo-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition">
+                            Aplicar Código
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grid de Productos -->
+                <div class="lg:w-3/4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6" id="productsContainer">
+                        <!-- Los productos se cargarán dinámicamente aquí -->
+                    </div>
+
+                    <!-- Paginación -->
+                    <div class="mt-12 flex justify-center">
+                        <nav class="flex items-center space-x-2">
+                            <button class="px-3 py-2 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50">
+                                <i data-feather="chevron-left" class="w-4 h-4"></i>
+                            </button>
+                            <button class="px-3 py-2 rounded-lg bg-indigo-600 text-white">1</button>
+                            <button class="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">2</button>
+                            <button class="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">3</button>
+                            <span class="px-2 text-gray-500">...</span>
+                            <button class="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">8</button>
+                            <button class="px-3 py-2 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50">
+                                <i data-feather="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Banner de Suscripción -->
+    <section class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold mb-4" data-aos="fade-up">No te pierdas nuestras ofertas</h2>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                Suscríbete a nuestro newsletter y recibe descuentos exclusivos y novedades.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto" data-aos="fade-up" data-aos-delay="200">
+                <input type="email" placeholder="Tu correo electrónico" 
+                       class="flex-grow px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition">
+                    Suscribirse
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <a href="#" class="flex items-center mb-4">
+                        <i data-feather="home" class="text-indigo-400"></i>
+                        <span class="ml-2 text-xl font-bold">HogarExpress</span>
+                    </a>
+                    <p class="text-gray-400">Tu tienda de confianza para todos los productos que necesitas para tu hogar.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Categorías</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Muebles</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cocina</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Dormitorio</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Decoración</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Ayuda</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Centro de ayuda</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Términos y condiciones</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Política de privacidad</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Devoluciones</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Contacto</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400">📞 +57 1 234 5678</li>
+                        <li class="text-gray-400">✉️ info@hogarexpress.com</li>
+                        <li class="text-gray-400">📍 Bogotá, Colombia</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 HogarExpress. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // =====================
+        // Servicios SOA
+        // =====================
+
+        // Servicio de Autenticación (Auth Service)
+        const AuthService = (() => {
+            let usuario = null;
+            
+            return {
+                login: (email, password) => {
+                    const usuariosValidos = [
+                        { email: 'usuario@hogarexpress.com', password: '123456', nombre: 'Usuario Demo' },
+                        { email: 'admin@hogarexpress.com', password: 'admin123', nombre: 'Administrador' }
+                    ];
+                    
+                    const usuarioValido = usuariosValidos.find(u => 
+                        u.email === email && u.password === password
+                    );
+                    
+                    if (usuarioValido) {
+                        usuario = { ...usuarioValido };
+                        localStorage.setItem('usuario', JSON.stringify(usuario));
+                        return { exito: true, usuario: usuario };
+                    } else {
+                        return { exito: false, error: 'Credenciales incorrectas' };
+                    }
+                },
+                
+                getUsuario: () => {
+                    if (!usuario) {
+                        const usuarioStorage = localStorage.getItem('usuario');
+                        if (usuarioStorage) {
+                            usuario = JSON.parse(usuarioStorage);
+                        }
+                    }
+                    return usuario;
+                }
+            };
+        })();
+
+        // Servicio de Productos (Product Service) - Singleton
+        const ProductService = (() => {
+            let instance;
+            
+            function init() {
+                const productos = [
+                    // =====================
+                    // MUEBLES (12 productos)
+                    // =====================
+                    { 
+                        id: 1, 
+                        nombre: "Sofá Moderno 3 Plazas", 
+                        precio: 899000,
+                        precioOriginal: 1099000,
+                        categoria: "muebles",
+                        subcategoria: "sala",
+                        imagen: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Sofá elegante en tela resistente, perfecto para salas modernas",
+                        marca: "HomeStyle",
+                        stock: 15,
+                        caracteristicas: ["Resistente al desgaste", "Fácil limpieza", "Estructura en madera"]
+                    },
+                    { 
+                        id: 2, 
+                        nombre: "Mesa de Comedor 6 Sillas", 
+                        precio: 1599000,
+                        precioOriginal: 1899000,
+                        categoria: "muebles",
+                        subcategoria: "comedor",
+                        imagen: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Juego completo de comedor para 6 personas, ideal para familias",
+                        marca: "HomeStyle",
+                        stock: 3,
+                        caracteristicas: ["Madera maciza", "Sillas tapizadas", "Resistente a líquidos"]
+                    },
+                    { 
+                        id: 3, 
+                        nombre: "Armario Ropero 4 Puertas", 
+                        precio: 749000,
+                        precioOriginal: 899000,
+                        categoria: "muebles",
+                        subcategoria: "dormitorio",
+                        imagen: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Armario espacioso con 4 puertas y sistema organizador interno",
+                        marca: "HomeStyle",
+                        stock: 7,
+                        caracteristicas: ["4 puertas corredizas", "Espejo incluido", "Sistema organizador"]
+                    },
+                    { 
+                        id: 4, 
+                        nombre: "Mesa de Centro Moderna", 
+                        precio: 345000,
+                        categoria: "muebles",
+                        subcategoria: "sala",
+                        imagen: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Mesa de centro con diseño contemporáneo y almacenamiento",
+                        marca: "ModernHouse",
+                        stock: 12,
+                        caracteristicas: ["Madera de caucho", "Cajón oculto", "Patas metálicas"]
+                    },
+                    { 
+                        id: 5, 
+                        nombre: "Escritorio Ejecutivo", 
+                        precio: 489000,
+                        categoria: "muebles",
+                        subcategoria: "oficina",
+                        imagen: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Escritorio amplio para home office con cajonera integrada",
+                        marca: "ComfortLiving",
+                        stock: 8,
+                        caracteristicas: ["Superficie laminada", "3 cajones", "Soporte para CPU"]
+                    },
+                    { 
+                        id: 6, 
+                        nombre: "Estantería Modular", 
+                        precio: 229000,
+                        categoria: "muebles",
+                        subcategoria: "organizacion",
+                        imagen: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Estantería modular escalable para libros y decoración",
+                        marca: "EcoHome",
+                        stock: 20,
+                        caracteristicas: ["Diseño modular", "Madera MDF", "Múltiples configuraciones"]
+                    },
+                    { 
+                        id: 7, 
+                        nombre: "Sillón Reclinable", 
+                        precio: 699000,
+                        categoria: "muebles",
+                        subcategoria: "sala",
+                        imagen: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Sillón reclinable ergonómico con soporte lumbar",
+                        marca: "ComfortLiving",
+                        stock: 6,
+                        caracteristicas: ["Mecanismo reclinable", "Espuma alta densidad", "Tela transpirable"]
+                    },
+                    { 
+                        id: 8, 
+                        nombre: "Cómoda 5 Cajones", 
+                        precio: 389000,
+                        categoria: "muebles",
+                        subcategoria: "dormitorio",
+                        imagen: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Cómoda espaciosa con 5 cajones para organización",
+                        marca: "ModernHouse",
+                        stock: 10,
+                        caracteristicas: ["5 cajones espaciosos", "Rieles metálicos", "Acabado mate"]
+                    },
+                    { 
+                        id: 9, 
+                        nombre: "Mesa Auxiliar", 
+                        precio: 189000,
+                        categoria: "muebles",
+                        subcategoria: "sala",
+                        imagen: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Mesa auxiliar compacta para espacios reducidos",
+                        marca: "EcoHome",
+                        stock: 15,
+                        caracteristicas: ["Diseño minimalista", "Patas de acero", "Fácil movilidad"]
+                    },
+                    { 
+                        id: 10, 
+                        nombre: "Banco de Entrada", 
+                        precio: 279000,
+                        categoria: "muebles",
+                        subcategoria: "entrada",
+                        imagen: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Banco con almacenamiento para entrada o recibidor",
+                        marca: "HomeStyle",
+                        stock: 9,
+                        caracteristicas: ["Asiento abatible", "Compartimento interno", "Resistente a humedad"]
+                    },
+                    { 
+                        id: 11, 
+                        nombre: "Mueble TV Moderno", 
+                        precio: 589000,
+                        categoria: "muebles",
+                        subcategoria: "sala",
+                        imagen: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Mueble para TV con espacio para equipos y almacenamiento",
+                        marca: "ModernHouse",
+                        stock: 5,
+                        caracteristicas: ["Cable management", "Estantes ajustables", "Puertas corredizas"]
+                    },
+                    { 
+                        id: 12, 
+                        nombre: "Barra Desayunadora", 
+                        precio: 429000,
+                        categoria: "muebles",
+                        subcategoria: "cocina",
+                        imagen: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Barra desayunadora con taburetes para espacios compactos",
+                        marca: "ComfortLiving",
+                        stock: 4,
+                        caracteristicas: ["2 taburetes incluidos", "Superficie en mármol sintético", "Altura regulable"]
+                    },
+
+                    // =====================
+                    // COCINA (10 productos)
+                    // =====================
+                    { 
+                        id: 13, 
+                        nombre: "Juego de Sartenes Antiadherentes", 
+                        precio: 189000,
+                        categoria: "cocina",
+                        subcategoria: "utensilios",
+                        imagen: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Set de 5 sartenes de alta calidad con tecnología antiadherente",
+                        marca: "ComfortLiving",
+                        stock: 8,
+                        caracteristicas: ["Antiadherente cerámico", "Apto para todo tipo de cocinas", "Mango ergonómico"]
+                    },
+                    { 
+                        id: 14, 
+                        nombre: "Cafetera Programable", 
+                        precio: 320000,
+                        categoria: "cocina",
+                        subcategoria: "electrodomesticos",
+                        imagen: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Cafetera automática con programación y mantenimiento de temperatura",
+                        marca: "ComfortLiving",
+                        stock: 10,
+                        caracteristicas: ["Programable 24h", "Antigoteo", "Apagado automático"]
+                    },
+                    { 
+                        id: 15, 
+                        nombre: "Licuadora Profesional", 
+                        precio: 259000,
+                        precioOriginal: 299000,
+                        categoria: "cocina",
+                        subcategoria: "electrodomesticos",
+                        imagen: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Licuadora de alta potencia para preparaciones profesionales",
+                        marca: "ModernHouse",
+                        stock: 12,
+                        caracteristicas: ["1000W de potencia", "Vaso de vidrio", "6 velocidades"]
+                    },
+                    { 
+                        id: 16, 
+                        nombre: "Juego de Cuchillos Profesional", 
+                        precio: 149000,
+                        categoria: "cocina",
+                        subcategoria: "utensilios",
+                        imagen: "https://images.unsplash.com/photo-1594736797933-d0b5f3c6e7c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Set de 6 cuchillos de acero inoxidable con soporte magnético",
+                        marca: "EcoHome",
+                        stock: 20,
+                        caracteristicas: ["Acero inoxidable", "Soporte magnético", "Mangos antideslizantes"]
+                    },
+                    { 
+                        id: 17, 
+                        nombre: "Olla Arrocera Digital", 
+                        precio: 189000,
+                        categoria: "cocina",
+                        subcategoria: "electrodomesticos",
+                        imagen: "https://images.unsplash.com/photo-1564631029898-be904ec30fd4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Olla arrocera con panel digital y múltiples funciones",
+                        marca: "EcoHome",
+                        stock: 15,
+                        caracteristicas: ["Panel digital", "Múltiples programas", "Mantenimiento de calor"]
+                    },
+                    { 
+                        id: 18, 
+                        nombre: "Set de Contenedores Herméticos", 
+                        precio: 89000,
+                        categoria: "cocina",
+                        subcategoria: "almacenamiento",
+                        imagen: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Set de 12 contenedores para almacenamiento de alimentos",
+                        marca: "HomeStyle",
+                        stock: 25,
+                        caracteristicas: ["Libres de BPA", "Apilables", "Varios tamaños"]
+                    },
+                    { 
+                        id: 19, 
+                        nombre: "Batidora de Mano", 
+                        precio: 129000,
+                        categoria: "cocina",
+                        subcategoria: "electrodomesticos",
+                        imagen: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Batidora de mano con múltiples accesorios",
+                        marca: "ComfortLiving",
+                        stock: 18,
+                        caracteristicas: ["5 velocidades", "Incluye varillas", "Ligera y ergonómica"]
+                    },
+                    { 
+                        id: 20, 
+                        nombre: "Tabla de Picar Bambú", 
+                        precio: 45000,
+                        categoria: "cocina",
+                        subcategoria: "utensilios",
+                        imagen: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Tabla de picar ecológica de bambú natural",
+                        marca: "EcoHome",
+                        stock: 30,
+                        caracteristicas: ["Bambú natural", "Antibacterial", "Fácil limpieza"]
+                    },
+                    { 
+                        id: 21, 
+                        nombre: "Tostadora 4 Ranuras", 
+                        precio: 99000,
+                        categoria: "cocina",
+                        subcategoria: "electrodomesticos",
+                        imagen: "https://images.unsplash.com/photo-1564631029898-be904ec30fd4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Tostadora con 4 ranuras y 6 niveles de tostado",
+                        marca: "ModernHouse",
+                        stock: 14,
+                        caracteristicas: ["4 ranuras", "6 niveles", "Bandéja extraíble"]
+                    },
+                    { 
+                        id: 22, 
+                        nombre: "Juego de Utensilios Silicona", 
+                        precio: 75000,
+                        categoria: "cocina",
+                        subcategoria: "utensilios",
+                        imagen: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Set de 8 utensilios de silicona para cocina",
+                        marca: "HomeStyle",
+                        stock: 22,
+                        caracteristicas: ["Silicona grado alimenticio", "Resistente al calor", "Colores surtidos"]
+                    },
+
+                    // =====================
+                    // DORMITORIO (8 productos)
+                    // =====================
+                    { 
+                        id: 23, 
+                        nombre: "Cama King Size con Cabecera", 
+                        precio: 1299000,
+                        categoria: "dormitorio",
+                        subcategoria: "camas",
+                        imagen: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Cama espaciosa con cabecera tapizada y estructura robusta",
+                        marca: "ModernHouse",
+                        stock: 5,
+                        caracteristicas: ["Estructura en pino", "Cabecera tapizada", "Fácil armado"]
+                    },
+                    { 
+                        id: 24, 
+                        nombre: "Sábanas Algodón Egipcio", 
+                        precio: 189000,
+                        categoria: "dormitorio",
+                        subcategoria: "textiles",
+                        imagen: "https://images.unsplash.com/photo-1582582621959-48d27397dc69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Juego de sábanas 100% algodón egipcio de 600 hilos",
+                        marca: "EcoHome",
+                        stock: 30,
+                        caracteristicas: ["Algodón 100%", "600 hilos", "Suave y transpirable"]
+                    },
+                    { 
+                        id: 25, 
+                        nombre: "Colchón Memory Foam", 
+                        precio: 899000,
+                        precioOriginal: 1099000,
+                        categoria: "dormitorio",
+                        subcategoria: "colchones",
+                        imagen: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Colchón ortopédico con memory foam y soporte lumbar",
+                        marca: "ComfortLiving",
+                        stock: 8,
+                        caracteristicas: ["Memory foam", "Soporte lumbar", "10 años garantía"]
+                    },
+                    { 
+                        id: 26, 
+                        nombre: "Mesa de Noche Moderna", 
+                        precio: 189000,
+                        categoria: "dormitorio",
+                        subcategoria: "accesorios",
+                        imagen: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Mesa de noche con cajón y puerta para almacenamiento",
+                        marca: "ModernHouse",
+                        stock: 12,
+                        caracteristicas: ["Cajón y puerta", "Carga USB", "Diseño minimalista"]
+                    },
+                    { 
+                        id: 27, 
+                        nombre: "Edredón Nórdico", 
+                        precio: 129000,
+                        categoria: "dormitorio",
+                        subcategoria: "textiles",
+                        imagen: "https://images.unsplash.com/photo-1582582621959-48d27397dc69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Edredón nórdico térmico para todas las estaciones",
+                        marca: "HomeStyle",
+                        stock: 25,
+                        caracteristicas: ["Térmico", "Hipoalergénico", "Máquina lavable"]
+                    },
+                    { 
+                        id: 28, 
+                        nombre: "Perchero Pared", 
+                        precio: 89000,
+                        categoria: "dormitorio",
+                        subcategoria: "organizacion",
+                        imagen: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Perchero de pared con 5 ganchos de madera",
+                        marca: "EcoHome",
+                        stock: 18,
+                        caracteristicas: ["Madera natural", "5 ganchos", "Fácil instalación"]
+                    },
+                    { 
+                        id: 29, 
+                        nombre: "Almohadas Ortopédicas", 
+                        precio: 69000,
+                        categoria: "dormitorio",
+                        subcategoria: "accesorios",
+                        imagen: "https://images.unsplash.com/photo-1582582621959-48d27397dc69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Set de 2 almohadas ortopédicas con memory foam",
+                        marca: "ComfortLiving",
+                        stock: 35,
+                        caracteristicas: ["Memory foam", "Soporte cervical", "Fundas lavables"]
+                    },
+                    { 
+                        id: 30, 
+                        nombre: "Cómoda 6 Cajones", 
+                        precio: 459000,
+                        categoria: "dormitorio",
+                        subcategoria: "almacenamiento",
+                        imagen: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Cómoda amplia con 6 cajones para máxima organización",
+                        marca: "HomeStyle",
+                        stock: 6,
+                        caracteristicas: ["6 cajones", "Rieles suaves", "Espejo opcional"]
+                    },
+
+                    // =====================
+                    // DECORACIÓN (9 productos)
+                    // =====================
+                    { 
+                        id: 31, 
+                        nombre: "Set de Decoración para Pared", 
+                        precio: 89000,
+                        categoria: "decoracion",
+                        subcategoria: "cuadros",
+                        imagen: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Conjunto de 3 cuadros decorativos con marcos de madera",
+                        marca: "ModernHouse",
+                        stock: 25,
+                        caracteristicas: ["Impresión HD", "Marcos naturales", "Incluye sistema de colgado"]
+                    },
+                    { 
+                        id: 32, 
+                        nombre: "Jarrón Cerámica Moderno", 
+                        precio: 65000,
+                        categoria: "decoracion",
+                        subcategoria: "accesorios",
+                        imagen: "https://images.unsplash.com/photo-1578506754654-84d74c13d1e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Jarrón de cerámica artesanal con diseño contemporáneo",
+                        marca: "EcoHome",
+                        stock: 20,
+                        caracteristicas: ["Cerámica artesanal", "Diseño único", "Multiple usos"]
+                    },
+                    { 
+                        id: 33, 
+                        nombre: "Espejo Decorativo Pared", 
+                        precio: 129000,
+                        categoria: "decoracion",
+                        subcategoria: "espejos",
+                        imagen: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Espejo circular con marco de madera para decoración",
+                        marca: "HomeStyle",
+                        stock: 15,
+                        caracteristicas: ["Marco de madera", "Diámetro 60cm", "Fácil instalación"]
+                    },
+                    { 
+                        id: 34, 
+                        nombre: "Set Velas Aromáticas", 
+                        precio: 45000,
+                        categoria: "decoracion",
+                        subcategoria: "ambientacion",
+                        imagen: "https://images.unsplash.com/photo-1578506754654-84d74c13d1e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Set de 3 velas aromáticas con diferentes fragancias",
+                        marca: "EcoHome",
+                        stock: 30,
+                        caracteristicas: ["Cera de soja", "Aromas naturales", "Quemado limpio"]
+                    },
+                    { 
+                        id: 35, 
+                        nombre: "Reloj de Pared Moderno", 
+                        precio: 99000,
+                        categoria: "decoracion",
+                        subcategoria: "accesorios",
+                        imagen: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Reloj de pared con diseño minimalista y silencioso",
+                        marca: "ModernHouse",
+                        stock: 18,
+                        caracteristicas: ["Movimiento silencioso", "Diseño minimalista", "Batería incluida"]
+                    },
+                    { 
+                        id: 36, 
+                        nombre: "Maceteros Colgantes Set", 
+                        precio: 55000,
+                        categoria: "decoracion",
+                        subcategoria: "jardin",
+                        imagen: "https://images.unsplash.com/photo-1578506754654-84d74c13d1e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Set de 3 maceteros colgantes para plantas pequeñas",
+                        marca: "EcoHome",
+                        stock: 22,
+                        caracteristicas: ["Material resistente", "Incluye cuerdas", "Drenaje incluido"]
+                    },
+                    { 
+                        id: 37, 
+                        nombre: "Estatuilla Decorativa", 
+                        precio: 35000,
+                        categoria: "decoracion",
+                        subcategoria: "figuras",
+                        imagen: "https://images.unsplash.com/photo-1578506754654-84d74c13d1e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Estatuilla abstracta en resina para decoración moderna",
+                        marca: "ModernHouse",
+                        stock: 28,
+                        caracteristicas: ["Resina de calidad", "Acabado mate", "Base estable"]
+                    },
+                    { 
+                        id: 38, 
+                        nombre: "Porta Retratos Digital", 
+                        precio: 189000,
+                        categoria: "decoracion",
+                        subcategoria: "tecnologia",
+                        imagen: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Porta retratos digital con pantalla LCD y Wi-Fi",
+                        marca: "ModernHouse",
+                        stock: 10,
+                        caracteristicas: ["Pantalla LCD", "Conexión Wi-Fi", "App control"]
+                    },
+                    { 
+                        id: 39, 
+                        nombre: "Tapete Decorativo", 
+                        precio: 79000,
+                        categoria: "decoracion",
+                        subcategoria: "textiles",
+                        imagen: "https://images.unsplash.com/photo-1578506754654-84d74c13d1e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Tapete antideslizante con diseño geométrico moderno",
+                        marca: "HomeStyle",
+                        stock: 16,
+                        caracteristicas: ["Antideslizante", "Fácil limpieza", "Diseño moderno"]
+                    },
+
+                    // =====================
+                    // ILUMINACIÓN (6 productos)
+                    // =====================
+                    { 
+                        id: 40, 
+                        nombre: "Lámpara de Pie Moderna", 
+                        precio: 245000,
+                        categoria: "iluminacion",
+                        subcategoria: "lamparas",
+                        imagen: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Lámpara de diseño contemporáneo con luz regulable",
+                        marca: "EcoHome",
+                        stock: 12,
+                        caracteristicas: ["LED regulable", "Base metálica", "3 niveles de intensidad"]
+                    },
+                    { 
+                        id: 41, 
+                        nombre: "Lámpara de Techo LED", 
+                        precio: 189000,
+                        categoria: "iluminacion",
+                        subcategoria: "techos",
+                        imagen: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Lámpara de techo LED con diseño flush mount",
+                        marca: "ModernHouse",
+                        stock: 8,
+                        caracteristicas: ["LED incluido", "Instalación flush", "4000K temperatura"]
+                    },
+                    { 
+                        id: 42, 
+                        nombre: "Set Focos Inteligentes", 
+                        precio: 129000,
+                        categoria: "iluminacion",
+                        subcategoria: "tecnologia",
+                        imagen: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Set de 3 focos inteligentes con control por app",
+                        marca: "ModernHouse",
+                        stock: 20,
+                        caracteristicas: ["Control por app", "16 millones colores", "Programable"]
+                    },
+                    { 
+                        id: 43, 
+                        nombre: "Lámpara de Mesa", 
+                        precio: 89000,
+                        categoria: "iluminacion",
+                        subcategoria: "mesa",
+                        imagen: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Lámpara de mesa con brazo articulado y base pesada",
+                        marca: "HomeStyle",
+                        stock: 25,
+                        caracteristicas: ["Brazo articulado", "Base pesada", "Interruptor táctil"]
+                    },
+                    { 
+                        id: 44, 
+                        nombre: "Tira LED RGB", 
+                        precio: 45000,
+                        categoria: "iluminacion",
+                        subcategoria: "ambientacion",
+                        imagen: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Tira LED RGB de 5 metros con control remoto",
+                        marca: "ModernHouse",
+                        stock: 30,
+                        caracteristicas: ["5 metros", "Control remoto", "16 colores"]
+                    },
+                    { 
+                        id: 45, 
+                        nombre: "Aplique de Pared", 
+                        precio: 69000,
+                        categoria: "iluminacion",
+                        subcategoria: "pared",
+                        imagen: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Aplique de pared para iluminación ambiental",
+                        marca: "EcoHome",
+                        stock: 18,
+                        caracteristicas: ["Diseño moderno", "Fácil instalación", "LED no incluido"]
+                    },
+
+                    // =====================
+                    // TEXTILES (7 productos)
+                    // =====================
+                    { 
+                        id: 46, 
+                        nombre: "Cortinas Blackout", 
+                        precio: 129000,
+                        categoria: "textiles",
+                        subcategoria: "cortinas",
+                        imagen: "https://images.unsplash.com/photo-1582582621959-48d27397dc69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Cortinas blackout térmicas y acústicas",
+                        marca: "HomeStyle",
+                        stock: 15,
+                        caracteristicas: ["Efecto blackout", "Aislamiento térmico", "Control acústico"]
+                    },
+                    { 
+                        id: 47, 
+                        nombre: "Alfombra Peluda", 
+                        precio: 89000,
+                        categoria: "textiles",
+                        subcategoria: "alfombras",
+                        imagen: "https://images.unsplash.com/photo-1582582621959-48d27397dc69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Alfombra suave y peluda para salas y dormitorios",
+                        marca: "ComfortLiving",
+                        stock: 22,
+                        caracteristicas: ["Pelo largo", "Suave al tacto", "Antideslizante"]
+                    },
+                    { 
+                        id: 48, 
+                        nombre: "Fundas para Cojines", 
+                        precio: 35000,
+                        categoria: "textiles",
+                        subcategoria: "cojines",
+                        imagen: "https://images.unsplash.com/photo-1582582621959-48d27397dc69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Set de 4 fundas para cojines con estampado moderno",
+                        marca: "EcoHome",
+                        stock: 35,
+                        caracteristicas: ["Set de 4", "Estampado moderno", "Cierre invisible"]
+                    },
+                    { 
+                        id: 49, 
+                        nombre: "Manta Polar", 
+                        precio: 55000,
+                        categoria: "textiles",
+                        subcategoria: "mantas",
+                        imagen: "https://images.unsplash.com/photo-1582582621959-48d27397dc69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Manta polar extra suave para sofa y cama",
+                        marca: "ComfortLiving",
+                        stock: 28,
+                        caracteristicas: ["Polar suave", "Tamaño grande", "Máquina lavable"]
+                    },
+                    { 
+                        id: 50, 
+                        nombre: "Tapete de Baño", 
+                        precio: 29000,
+                        categoria: "textiles",
+                        subcategoria: "banos",
+                        imagen: "https://images.unsplash.com/photo-1582582621959-48d27397dc69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Tapete de baño absorbente y antideslizante",
+                        marca: "HomeStyle",
+                        stock: 40,
+                        caracteristicas: ["Alta absorción", "Base antideslizante", "Secado rápido"]
+                    },
+                    { 
+                        id: 51, 
+                        nombre: "Cubre Cama Elástico", 
+                        precio: 45000,
+                        categoria: "textiles",
+                        subcategoria: "camas",
+                        imagen: "https://images.unsplash.com/photo-1582582621959-48d27397dc69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Cubre cama elástico para protección del colchón",
+                        marca: "ComfortLiving",
+                        stock: 32,
+                        caracteristicas: ["Elástico 4 direcciones", "Impermeable", "Transpirable"]
+                    },
+                    { 
+                        id: 52, 
+                        nombre: "Set Toallas Baño", 
+                        precio: 99000,
+                        categoria: "textiles",
+                        subcategoria: "banos",
+                        imagen: "https://images.unsplash.com/photo-1582582621959-48d27397dc69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Set de 6 toallas de baño de algodón egipcio",
+                        marca: "HomeStyle",
+                        stock: 20,
+                        caracteristicas: ["Algodón egipcio", "Set completo", "Alta absorción"]
+                    }
+                ];
+                
+                return {
+                    listar: () => productos,
+                    buscar: (id) => productos.find(p => p.id === id),
+                    filtrarPorCategoria: (categoria) => {
+                        if (categoria === 'all') return productos;
+                        return productos.filter(p => p.categoria === categoria);
+                    },
+                    buscarPorTexto: (texto) => {
+                        return productos.filter(p => 
+                            p.nombre.toLowerCase().includes(texto.toLowerCase()) ||
+                            p.descripcion.toLowerCase().includes(texto.toLowerCase()) ||
+                            p.marca.toLowerCase().includes(texto.toLowerCase()) ||
+                            p.categoria.toLowerCase().includes(texto.toLowerCase())
+                        );
+                    },
+                    obtenerCategorias: () => {
+                        const categorias = [...new Set(productos.map(p => p.categoria))];
+                        return categorias;
+                    },
+                    obtenerConteoPorCategoria: () => {
+                        const conteo = {};
+                        productos.forEach(p => {
+                            conteo[p.categoria] = (conteo[p.categoria] || 0) + 1;
+                        });
+                        return conteo;
+                    }
+                };
+            }
+            
+            return {
+                getInstance: () => {
+                    if (!instance) {
+                        instance = init();
+                    }
+                    return instance;
+                }
+            };
+        })();
+
+        // Servicio de Carrito (Cart Service)
+        const CartService = (() => {
+            let carrito = [];
+            let observers = [];
+            
+            const notificarObservers = () => {
+                observers.forEach(observer => observer(carrito));
+            };
+            
+            const cargarCarrito = () => {
+                const carritoStorage = localStorage.getItem('carrito');
+                if (carritoStorage) {
+                    carrito = JSON.parse(carritoStorage);
+                }
+            };
+            
+            const guardarCarrito = () => {
+                localStorage.setItem('carrito', JSON.stringify(carrito));
+            };
+            
+            cargarCarrito();
+            
+            return {
+                agregar: (producto) => {
+                    const itemExistente = carrito.find(item => item.id === producto.id);
+                    
+                    if (itemExistente) {
+                        itemExistente.cantidad += 1;
+                    } else {
+                        carrito.push({
+                            ...producto,
+                            cantidad: 1,
+                            fechaAgregado: new Date().toISOString()
+                        });
+                    }
+                    
+                    guardarCarrito();
+                    notificarObservers();
+                },
+                
+                eliminar: (id) => {
+                    carrito = carrito.filter(item => item.id !== id);
+                    guardarCarrito();
+                    notificarObservers();
+                },
+                
+                actualizarCantidad: (id, cantidad) => {
+                    const item = carrito.find(item => item.id === id);
+                    if (item) {
+                        if (cantidad <= 0) {
+                            this.eliminar(id);
+                        } else {
+                            item.cantidad = cantidad;
+                            guardarCarrito();
+                            notificarObservers();
+                        }
+                    }
+                },
+                
+                listar: () => [...carrito],
+                
+                vaciar: () => {
+                    carrito = [];
+                    guardarCarrito();
+                    notificarObservers();
+                },
+                
+                obtenerTotal: () => carrito.reduce((total, item) => total + (item.precio * item.cantidad), 0),
+                
+                obtenerCantidadTotal: () => carrito.reduce((total, item) => total + item.cantidad, 0),
+                
+                suscribir: (observer) => {
+                    observers.push(observer);
+                    observer(carrito);
+                }
+            };
+        })();
+
+        // =====================
+        // Inicialización de la aplicación
+        // =====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar AOS
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+            
+            // Inicializar Feather Icons
+            feather.replace();
+            
+            // Obtener instancias de servicios
+            const productService = ProductService.getInstance();
+            
+            // Elementos del DOM
+            const loginModal = document.getElementById('loginModal');
+            const cartModal = document.getElementById('cartModal');
+            const loginButton = document.getElementById('loginButton');
+            const cartButton = document.getElementById('cartButton');
+            const closeLogin = document.getElementById('closeLogin');
+            const closeCart = document.getElementById('closeCart');
+            const loginForm = document.getElementById('loginForm');
+            const cartItems = document.getElementById('cartItems');
+            const emptyCart = document.getElementById('emptyCart');
+            const cartTotal = document.getElementById('cartTotal');
+            const shippingInfo = document.getElementById('shippingInfo');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const productsContainer = document.getElementById('productsContainer');
+            const productCount = document.getElementById('productCount');
+
+            // Función para renderizar productos
+            const renderizarProductos = (productos) => {
+                productCount.textContent = productos.length;
+                
+                productsContainer.innerHTML = productos.map(producto => `
+                    <div class="product-card bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100" data-aos="fade-up" data-category="${producto.categoria}">
+                        <div class="relative">
+                            <img src="${producto.imagen}" loading="lazy" alt="${producto.nombre}" class="w-full h-48 object-cover">
+                            
+                            <!-- Badges -->
+                            ${producto.precioOriginal ? `
+                                <span class="stock-badge bg-red-500 text-white text-xs px-2 py-1 rounded">-${Math.round((1 - producto.precio/producto.precioOriginal) * 100)}%</span>
+                            ` : ''}
+                            
+                            ${producto.stock < 10 ? `
+                                <span class="absolute top-12 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">Últimas unidades</span>
+                            ` : ''}
+                            
+                            <!-- Acciones rápidas -->
+                            <div class="absolute top-2 right-2 flex flex-col gap-2">
+                                <button type="button" class="wishlist-btn bg-white p-2 rounded-full shadow-md hover:shadow-lg transition" aria-label="Agregar a favoritos">
+                                    <i data-feather="heart" class="w-4 h-4 text-gray-600"></i>
+                                </button>
+                                <button type="button" class="quick-view bg-white p-2 rounded-full shadow-md hover:shadow-lg transition" aria-label="Vista rápida">
+                                    <i data-feather="eye" class="w-4 h-4 text-gray-600"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4">
+                            <!-- Categoría -->
+                            <span class="category-tag">${producto.categoria}</span>
+                            
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-semibold text-gray-900 text-lg">${producto.nombre}</h3>
+                                <span class="bg-indigo-100 text-indigo-600 text-xs px-2 py-1 rounded">${producto.marca}</span>
+                            </div>
+                            
+                            <p class="text-gray-600 text-sm mb-3 line-clamp-2">${producto.descripcion}</p>
+                            
+                            <div class="flex items-center mb-3">
+                                <div class="flex text-yellow-400">
+                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                </div>
+                                <span class="text-gray-500 text-xs ml-1">(${Math.floor(Math.random() * 100) + 50})</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center mb-3">
+                                <div>
+                                    ${producto.precioOriginal ? `
+                                        <span class="text-gray-500 line-through text-sm">$${producto.precioOriginal.toLocaleString()}</span>
+                                    ` : ''}
+                                    <span class="text-indigo-600 font-bold text-xl ml-2">$${producto.precio.toLocaleString()}</span>
+                                </div>
+                                <span class="text-green-600 text-sm font-medium">${producto.stock} en stock</span>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button type="button" data-id="${producto.id}" 
+                                        class="add-to-cart flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-indigo-700 transition flex items-center justify-center" aria-label="Agregar ${producto.nombre} al carrito">
+                                    <i data-feather="shopping-cart" class="w-4 h-4 mr-2"></i>
+                                    Agregar
+                                </button>
+                                <button type="button" class="bg-gray-100 text-gray-600 p-2 rounded-lg hover:bg-gray-200 transition" aria-label="Agregar ${producto.nombre} a favoritos">
+                                    <i data-feather="heart" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Reemplazar íconos feather
+                feather.replace();
+                
+                // Configurar event listeners para los botones de agregar al carrito
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const productId = parseInt(this.getAttribute('data-id'));
+                        const producto = productService.buscar(productId);
+                        
+                        if (producto) {
+                            CartService.agregar(producto);
+                            
+                            // Efecto visual de confirmación
+                            this.classList.add('added');
+                            const originalHTML = this.innerHTML;
+                            this.innerHTML = '<i data-feather="check" class="w-4 h-4 mr-2"></i>Agregado';
+                            feather.replace();
+                            
+                            setTimeout(() => {
+                                this.classList.remove('added');
+                                this.innerHTML = originalHTML;
+                                feather.replace();
+                            }, 2000);
+                        }
+                    });
+                });
+            };
+
+            // Función para actualizar la interfaz de usuario del carrito
+            const actualizarInterfazCarrito = (carrito) => {
+                const cantidadTotal = CartService.obtenerCantidadTotal();
+                const total = CartService.obtenerTotal();
+                
+                // Actualizar badge del carrito
+                document.querySelector('.cart-badge').textContent = cantidadTotal;
+                
+                // Actualizar modal del carrito
+                if (carrito.length === 0) {
+                    emptyCart.classList.remove('hidden');
+                    cartItems.innerHTML = '';
+                    checkoutBtn.disabled = true;
+                } else {
+                    emptyCart.classList.add('hidden');
+                    checkoutBtn.disabled = false;
+                    
+                    cartItems.innerHTML = carrito.map(item => `
+                        <div class="flex items-center justify-between border-b pb-4">
+                            <div class="flex items-center space-x-3">
+                                <img src="${item.imagen}" alt="${item.nombre}" class="w-12 h-12 object-cover rounded">
+                                <div>
+                                    <h4 class="font-medium text-sm">${item.nombre}</h4>
+                                    <p class="text-indigo-600 font-bold">$${item.precio.toLocaleString()}</p>
+                                    <div class="flex items-center space-x-2 mt-1">
+                                        <button onclick="actualizarCantidad(${item.id}, ${item.cantidad - 1})" 
+                                                class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs">-</button>
+                                        <span class="text-sm">${item.cantidad}</span>
+                                        <button onclick="actualizarCantidad(${item.id}, ${item.cantidad + 1})" 
+                                                class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="eliminarDelCarrito(${item.id})" 
+                                    class="cart-item-remove text-gray-400 hover:text-red-500">
+                                <i data-feather="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                    
+                    feather.replace();
+                }
+                
+                // Actualizar total y envío
+                cartTotal.textContent = `$${total.toLocaleString()}`;
+                
+                if (total > 150000) {
+                    shippingInfo.classList.remove('hidden');
+                } else {
+                    shippingInfo.classList.add('hidden');
+                }
+            };
+
+            // Funciones globales para los botones del carrito
+            window.eliminarDelCarrito = (id) => {
+                CartService.eliminar(id);
+            };
+
+            window.actualizarCantidad = (id, nuevaCantidad) => {
+                CartService.actualizarCantidad(id, nuevaCantidad);
+            };
+
+            // Configurar Observer para el carrito
+            CartService.suscribir(actualizarInterfazCarrito);
+
+            // Event Listeners para modales
+            // Mostrar/ocultar modales con manejo de accesibilidad
+            const showModal = (modal) => {
+                modal.style.display = 'block';
+                modal.setAttribute('aria-hidden', 'false');
+                // focus inicial opcional
+                const focusable = modal.querySelector('input, button, [tabindex]');
+                if (focusable) focusable.focus();
+            };
+
+            const hideModal = (modal) => {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+            };
+
+            loginButton.addEventListener('click', () => showModal(loginModal));
+            cartButton.addEventListener('click', () => showModal(cartModal));
+            closeLogin.addEventListener('click', () => hideModal(loginModal));
+            closeCart.addEventListener('click', () => hideModal(cartModal));
+
+            // Cerrar modales al hacer clic fuera
+            window.addEventListener('click', (e) => {
+                if (e.target === loginModal) {
+                    loginModal.style.display = 'none';
+                }
+                if (e.target === cartModal) {
+                    cartModal.style.display = 'none';
+                }
+            });
+
+            // Login Form
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                const resultado = AuthService.login(email, password);
+                
+                if (resultado.exito) {
+                    alert(`¡Bienvenido ${resultado.usuario.nombre}!`);
+                    loginModal.style.display = 'none';
+                    loginForm.reset();
+                    
+                    // Actualizar ícono de usuario
+                    loginButton.innerHTML = '<i data-feather="user-check" class="text-green-600"></i>';
+                    feather.replace();
+                } else {
+                    alert('Error: ' + resultado.error);
+                }
+            });
+
+            // Checkout
+            checkoutBtn.addEventListener('click', () => {
+                const usuario = AuthService.getUsuario();
+                if (!usuario) {
+                    alert('Por favor inicia sesión para continuar con la compra');
+                    loginModal.style.display = 'block';
+                    return;
+                }
+                
+                const carrito = CartService.listar();
+                if (carrito.length === 0) {
+                    alert('Tu carrito está vacío');
+                    return;
+                }
+                
+                const total = CartService.obtenerTotal();
+                let mensaje = `✅ Compra realizada con éxito!\n\n`;
+                mensaje += `📦 Productos comprados (${CartService.obtenerCantidadTotal()} items):\n`;
+                
+                carrito.forEach(item => {
+                    mensaje += `• ${item.nombre} x${item.cantidad} - $${(item.precio * item.cantidad).toLocaleString()}\n`;
+                });
+                
+                mensaje += `\n💰 Total: $${total.toLocaleString()}`;
+                
+                if (total > 150000) {
+                    mensaje += '\n🚚 ¡Envío gratis aplicado!';
+                }
+                
+                alert(mensaje);
+                
+                // Vaciar carrito después de la compra
+                CartService.vaciar();
+                cartModal.style.display = 'none';
+            });
+
+            // Configurar filtros por categoría
+            const checkboxesCategoria = document.querySelectorAll('input[data-category]');
+            checkboxesCategoria.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const categoriasSeleccionadas = Array.from(checkboxesCategoria)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.getAttribute('data-category'));
+                    
+                    let productosFiltrados;
+                    if (categoriasSeleccionadas.length === 0) {
+                        productosFiltrados = productService.listar();
+                    } else {
+                        productosFiltrados = productService.listar().filter(producto => 
+                            categoriasSeleccionadas.includes(producto.categoria)
+                        );
+                    }
+                    
+                    renderizarProductos(productosFiltrados);
+                });
+            });
+
+            // Configurar búsqueda en tiempo real
+            const searchInput = document.querySelector('input[placeholder="Buscar productos..."]');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const texto = e.target.value.trim();
+                    if (texto.length > 2) {
+                        const resultados = productService.buscarPorTexto(texto);
+                        renderizarProductos(resultados);
+                    } else if (texto.length === 0) {
+                        renderizarProductos(productService.listar());
+                    }
+                });
+            }
+
+            // Cargar productos iniciales
+            const productosIniciales = productService.listar();
+            renderizarProductos(productosIniciales);
+
+            // Actualizar contadores en filtros
+            const conteoCategorias = productService.obtenerConteoPorCategoria();
+            document.querySelectorAll('input[data-category]').forEach(checkbox => {
+                const categoria = checkbox.getAttribute('data-category');
+                const countSpan = checkbox.parentElement.querySelector('.ml-auto');
+                if (countSpan && conteoCategorias[categoria]) {
+                    countSpan.textContent = `(${conteoCategorias[categoria]})`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

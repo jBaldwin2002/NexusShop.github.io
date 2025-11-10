@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusShop | Todo para tu hogar</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #7e22ce 100%);
+        }
+        .cart-badge {
+            top: -10px;
+            right: -10px;
+        }
+        .add-to-cart.added {
+            background-color: #10b981 !important;
+            color: white !important;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .cart-item-remove {
+            transition: all 0.3s ease;
+        }
+        .cart-item-remove:hover {
+            transform: scale(1.1);
+            color: #ef4444;
+        }
+        .category-filter.active {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .contact-card {
+            transition: all 0.3s ease;
+        }
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .map-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center">
+                        <i data-feather="home" class="text-indigo-600"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900">NexusShop</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../Main.html" class="text-gray-700 hover:text-indigo-600 transition">Inicio</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 rounded-full hover:bg-gray-100">
+                        <i data-feather="search" class="text-gray-600"></i>
+                    </button>
+                    <button id="cartButton" class="p-2 rounded-full hover:bg-gray-100 relative">
+                        <i data-feather="shopping-cart" class="text-gray-600"></i>
+                        <span class="cart-badge absolute bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                    <button id="loginButton" class="p-2 rounded-full hover:bg-gray-100">
+                        <i data-feather="user" class="text-gray-600"></i>
+                    </button>
+                    <button class="md:hidden p-2 rounded-full hover:bg-gray-100">
+                        <i data-feather="menu" class="text-gray-600"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sección de Contacto -->
+    <section id="contacto" class="py-20 bg-gradient-to-br from-gray-50 to-indigo-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Encabezado -->
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Contáctanos</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Estamos aquí para ayudarte. ¿Tienes preguntas sobre nuestros productos, envíos o necesitas asesoría? 
+                    No dudes en contactarnos.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <!-- Información de Contacto -->
+                <div class="lg:col-span-1" data-aos="fade-right">
+                    <div class="bg-white rounded-2xl shadow-xl p-8 contact-card">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-8">Información de Contacto</h2>
+                        
+                        <div class="space-y-6">
+                            <!-- Teléfono -->
+                            <div class="flex items-start">
+                                <div class="bg-indigo-100 p-3 rounded-xl mr-4">
+                                    <i data-feather="phone" class="text-indigo-600 w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 text-lg">Teléfono</h3>
+                                    <p class="text-gray-600 text-lg">+57 1 234 5678</p>
+                                    <p class="text-gray-500 text-sm mt-1">Lunes a Viernes: 7:00 AM - 8:00 PM</p>
+                                    <p class="text-gray-500 text-sm">Sábados: 8:00 AM - 2:00 PM</p>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="flex items-start">
+                                <div class="bg-green-100 p-3 rounded-xl mr-4">
+                                    <i data-feather="mail" class="text-green-600 w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 text-lg">Email</h3>
+                                    <p class="text-gray-600 text-lg">info@NexusShop.com</p>
+                                    <p class="text-gray-500 text-sm mt-1">Soporte: soporte@NexusShop.com</p>
+                                    <p class="text-gray-500 text-sm">Ventas: ventas@NexusShop.com</p>
+                                </div>
+                            </div>
+
+                            <!-- Dirección -->
+                            <div class="flex items-start">
+                                <div class="bg-purple-100 p-3 rounded-xl mr-4">
+                                    <i data-feather="map-pin" class="text-purple-600 w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 text-lg">Dirección</h3>
+                                    <p class="text-gray-600 text-lg">Carrera 15 # 88-64</p>
+                                    <p class="text-gray-600">Bogotá, Colombia</p>
+                                    <p class="text-gray-500 text-sm mt-1">Oficina principal y showroom</p>
+                                </div>
+                            </div>
+
+                            <!-- Horarios -->
+                            <div class="flex items-start">
+                                <div class="bg-orange-100 p-3 rounded-xl mr-4">
+                                    <i data-feather="clock" class="text-orange-600 w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 text-lg">Horarios de Atención</h3>
+                                    <p class="text-gray-600">Lunes a Viernes: 8:00 AM - 7:00 PM</p>
+                                    <p class="text-gray-600">Sábados: 9:00 AM - 5:00 PM</p>
+                                    <p class="text-gray-500 text-sm mt-1">Domingos: Cerrado</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Redes Sociales -->
+                        <div class="mt-8 pt-8 border-t border-gray-200">
+                            <h3 class="font-semibold text-gray-900 mb-4">Síguenos en redes sociales</h3>
+                            <div class="flex space-x-4">
+                                <a href="#" class="bg-blue-100 text-blue-600 p-3 rounded-xl hover:bg-blue-200 transition">
+                                    <i data-feather="facebook" class="w-5 h-5"></i>
+                                </a>
+                                <a href="#" class="bg-pink-100 text-pink-600 p-3 rounded-xl hover:bg-pink-200 transition">
+                                    <i data-feather="instagram" class="w-5 h-5"></i>
+                                </a>
+                                <a href="#" class="bg-blue-100 text-blue-400 p-3 rounded-xl hover:bg-blue-200 transition">
+                                    <i data-feather="twitter" class="w-5 h-5"></i>
+                                </a>
+                                <a href="#" class="bg-red-100 text-red-600 p-3 rounded-xl hover:bg-red-200 transition">
+                                    <i data-feather="youtube" class="w-5 h-5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de Contacto y Mapa -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Formulario -->
+                    <div class="bg-white rounded-2xl shadow-xl p-8 contact-card" data-aos="fade-left">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Envíanos un Mensaje</h2>
+                        <form id="contactForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre Completo *</label>
+                                    <input type="text" required 
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                           placeholder="Tu nombre completo">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                                    <input type="email" required 
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                           placeholder="tu@email.com">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Teléfono</label>
+                                    <input type="tel" 
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                           placeholder="+57 300 123 4567">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Asunto *</label>
+                                    <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                                        <option value="">Selecciona un asunto</option>
+                                        <option value="consulta">Consulta general</option>
+                                        <option value="producto">Información de producto</option>
+                                        <option value="envio">Consulta sobre envíos</option>
+                                        <option value="garantia">Garantías y devoluciones</option>
+                                        <option value="soporte">Soporte técnico</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Mensaje *</label>
+                                <textarea rows="5" required
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                          placeholder="Describe tu consulta o mensaje..."></textarea>
+                            </div>
+
+                            <div class="flex items-center">
+                                <input type="checkbox" id="newsletter" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                <label for="newsletter" class="ml-2 text-sm text-gray-600">
+                                    Deseo recibir información sobre promociones y novedades
+                                </label>
+                            </div>
+
+                            <button type="submit" 
+                                    class="w-full bg-indigo-600 text-white py-4 px-6 rounded-xl font-semibold hover:bg-indigo-700 transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                <i data-feather="send" class="w-5 h-5 inline mr-2"></i>
+                                Enviar Mensaje
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Mapa -->
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden contact-card" data-aos="fade-up">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-xl font-semibold text-gray-900">Visita Nuestro Showroom</h3>
+                            <p class="text-gray-600 mt-1">Ven y conoce nuestros productos en persona</p>
+                        </div>
+                        <div class="map-container">
+                            <!-- Mapa de Google Maps embebido -->
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.785231263031!2d-74.0559499250181!3d4.648129241639671!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9c0c1c1c1c1d%3A0x1c1c1c1c1c1c1c1c!2sBogot%C3%A1%2C%20Colombia!5e0!3m2!1ses!2sco!4v1234567890" 
+                                width="100%" 
+                                height="300" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                        <div class="p-6 bg-gray-50">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">Cómo llegar</h4>
+                                    <p class="text-gray-600 text-sm">Carrera 5 21-38, Bogotá, D.C</p>
+                                </div>
+                                <a href="https://maps.google.com/?q=Carrera+5+21-38+Bogota" 
+                                   target="_blank"
+                                   class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center">
+                                    <i data-feather="navigation" class="w-4 h-4 mr-2"></i>
+                                    Direcciones
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preguntas Frecuentes -->
+            <div class="mt-20" data-aos="fade-up">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Preguntas Frecuentes</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Resolvemos tus dudas más comunes sobre compras, envíos y garantías</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- FAQ Item 1 -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="font-semibold text-gray-900 text-lg mb-2 flex items-center">
+                            <i data-feather="truck" class="text-indigo-600 w-5 h-5 mr-3"></i>
+                            ¿Cuáles son los tiempos de entrega?
+                        </h3>
+                        <p class="text-gray-600">Los envíos dentro de Bogotá tardan 1-2 días hábiles. Para otras ciudades, el tiempo estimado es de 3-5 días hábiles.</p>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="font-semibold text-gray-900 text-lg mb-2 flex items-center">
+                            <i data-feather="rotate-ccw" class="text-green-600 w-5 h-5 mr-3"></i>
+                            ¿Cuál es la política de devoluciones?
+                        </h3>
+                        <p class="text-gray-600">Aceptamos devoluciones dentro de los 30 días posteriores a la compra. El producto debe estar en perfecto estado y en su empaque original.</p>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="font-semibold text-gray-900 text-lg mb-2 flex items-center">
+                            <i data-feather="credit-card" class="text-blue-600 w-5 h-5 mr-3"></i>
+                            ¿Qué métodos de pago aceptan?
+                        </h3>
+                        <p class="text-gray-600">Aceptamos tarjetas de crédito/débito, transferencias bancarias, PSE y pagos en efectivo en nuestros puntos autorizados.</p>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="font-semibold text-gray-900 text-lg mb-2 flex items-center">
+                            <i data-feather="shield" class="text-purple-600 w-5 h-5 mr-3"></i>
+                            ¿Ofrecen garantía en los productos?
+                        </h3>
+                        <p class="text-gray-600">Sí, todos nuestros productos cuentan con garantía del fabricante. La duración varía según el producto, desde 6 meses hasta 2 años.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <a href="#" class="flex items-center mb-4">
+                        <i data-feather="home" class="text-indigo-400"></i>
+                        <span class="ml-2 text-xl font-bold">NexusShop</span>
+                    </a>
+                    <p class="text-gray-400">Tu tienda de confianza para todos los productos que necesitas para tu hogar.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Compañía</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Sobre nosotros</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Trabaja con nosotros</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Prensa</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Ayuda</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Centro de ayuda</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Términos y condiciones</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Política de privacidad</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Devoluciones</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Contacto</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400">📞 +57 1 234 5678</li>
+                        <li class="text-gray-400">✉️ info@NexusShop.com</li>
+                        <li class="text-gray-400">📍 Bogotá, Colombia</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 NexusShop. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // =====================
+        // Inicialización
+        // =====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar AOS
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+            
+            // Inicializar Feather Icons
+            feather.replace();
+            
+            // Configurar el scroll suave para el enlace de contacto
+            const contactoLink = document.querySelector('a[href="#contacto"]');
+            if (contactoLink) {
+                contactoLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const contactoSection = document.getElementById('contacto');
+                    if (contactoSection) {
+                        contactoSection.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            }
+
+            // Manejar el formulario de contacto
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Simular envío del formulario
+                    const submitBtn = contactForm.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    submitBtn.innerHTML = '<i data-feather="loader" class="w-5 h-5 inline mr-2 animate-spin"></i>Enviando...';
+                    submitBtn.disabled = true;
+                    
+                    setTimeout(() => {
+                        alert('¡Mensaje enviado con éxito! Te contactaremos pronto.');
+                        contactForm.reset();
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        feather.replace();
+                    }, 2000);
+                });
+            }
+
+            // Efectos hover para las cards de contacto
+            const contactCards = document.querySelectorAll('.contact-card');
+            contactCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+
+        // =====================
+        // Servicios SOA (simplificados para el ejemplo)
+        // =====================
+        const AuthService = {
+            login: (email, password) => {
+                return { exito: true, usuario: { nombre: 'Usuario Demo' } };
+            }
+        };
+
+        const CartService = {
+            agregar: (producto) => {
+                console.log('Producto agregado:', producto);
+            },
+            suscribir: (callback) => {
+                // Simulación
+            }
+        };
+    </script>
+</body>
+</html>

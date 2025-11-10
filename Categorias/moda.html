@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleNexus | Moda y Estilo</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+        }
+        .cart-badge {
+            top: -10px;
+            right: -10px;
+        }
+        .add-to-cart.added {
+            background-color: #10b981 !important;
+            color: white !important;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .cart-item-remove {
+            transition: all 0.3s ease;
+        }
+        .cart-item-remove:hover {
+            transform: scale(1.1);
+            color: #ef4444;
+        }
+        .category-filter.active {
+            background-color: #ec4899;
+            color: white;
+        }
+        .fashion-card {
+            background: linear-gradient(145deg, #ffffff 0%, #fdf2f8 100%);
+            border: 1px solid #fce7f3;
+        }
+        .size-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+        .size-option {
+            width: 2rem;
+            height: 2rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .size-option:hover {
+            border-color: #ec4899;
+        }
+        .size-option.selected {
+            background-color: #ec4899;
+            color: white;
+            border-color: #ec4899;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Modal de Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="bg-pink-600 text-white p-6 rounded-t-lg">
+                <h2 class="text-2xl font-bold">Iniciar Sesión</h2>
+                <button id="closeLogin" class="absolute top-4 right-4 text-white hover:text-gray-200">
+                    <i data-feather="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" required 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                        <input type="password" id="password" required 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500">
+                    </div>
+                    <button type="submit" 
+                            class="w-full bg-pink-600 text-white py-2 px-4 rounded-md hover:bg-pink-700 transition duration-200">
+                        Iniciar Sesión
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-600">¿No tienes cuenta? <a href="#" class="text-pink-600 hover:underline">Regístrate</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal del Carrito -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <div class="bg-pink-600 text-white p-6 rounded-t-lg">
+                <h2 class="text-2xl font-bold">🛒 Mi Carrito</h2>
+                <button id="closeCart" class="absolute top-4 right-4 text-white hover:text-gray-200">
+                    <i data-feather="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-6 max-h-96 overflow-y-auto">
+                <div id="cartItems" class="space-y-4">
+                    <!-- Los items del carrito se cargarán aquí dinámicamente -->
+                </div>
+                <div id="emptyCart" class="text-center py-8">
+                    <i data-feather="shopping-bag" class="w-16 h-16 text-gray-300 mx-auto mb-4"></i>
+                    <p class="text-gray-500">Tu carrito está vacío</p>
+                </div>
+            </div>
+            <div class="border-t p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-semibold">Total:</span>
+                    <span id="cartTotal" class="text-xl font-bold text-pink-600">$0</span>
+                </div>
+                <div id="shippingInfo" class="text-green-600 text-sm mb-4 hidden">
+                    🚚 ¡Envío gratis aplicado!
+                </div>
+                <button id="checkoutBtn" 
+                        class="w-full bg-pink-600 text-white py-3 px-4 rounded-md hover:bg-pink-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Proceder al Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center">
+                        <i data-feather="shopping-bag" class="text-pink-600"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900">StyleNexus</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../Main.html" class="text-gray-700 hover:text-pink-600 transition">Inicio</a>
+                    <a href="#" class="text-gray-700 hover:text-pink-600 transition">Productos</a>
+                    <a href="#" class="text-gray-700 hover:text-pink-600 transition">Nueva Colección</a>
+                    <a href="../Otros/contacto.html" class="text-gray-700 hover:text-pink-600 transition">Contacto</a>
+                    
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 rounded-full hover:bg-gray-100">
+                        <i data-feather="search" class="text-gray-600"></i>
+                    </button>
+                    <button id="cartButton" class="p-2 rounded-full hover:bg-gray-100 relative">
+                        <i data-feather="shopping-bag" class="text-gray-600"></i>
+                        <span class="cart-badge absolute bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                    <button id="loginButton" class="p-2 rounded-full hover:bg-gray-100">
+                        <i data-feather="user" class="text-gray-600"></i>
+                    </button>
+                    <button class="md:hidden p-2 rounded-full hover:bg-gray-100">
+                        <i data-feather="menu" class="text-gray-600"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0" data-aos="fade-right">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Descubre tu estilo único</h1>
+                    <p class="text-xl mb-8">Las últimas tendencias en moda para expresar tu personalidad.</p>
+                    <button class="bg-white text-pink-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg" id="comprarAhoraHero">
+                        Ver Colección
+                    </button>
+                </div>
+                <div class="md:w-1/2" data-aos="fade-left">
+                    <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Modelo de moda" class="rounded-lg shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="py-10 bg-white">
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
+            <h2 class="text-3xl font-bold text-center mb-13">Categorías de Moda</h2>
+        </div>
+    </section>
+
+    <!-- Category Filters -->
+    <section class="py-8 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button class="category-filter active px-4 py-2 rounded-full bg-pink-600 text-white" data-category="all">
+                    Todos
+                </button>
+                <button class="category-filter px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-200" data-category="mujer">
+                    Mujer
+                </button>
+                <button class="category-filter px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-200" data-category="hombre">
+                    Hombre
+                </button>
+                <button class="category-filter px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-200" data-category="accesorios">
+                    Accesorios
+                </button>
+                <button class="category-filter px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-200" data-category="calzado">
+                    Calzado
+                </button>
+                <button class="category-filter px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-200" data-category="deportiva">
+                    Ropa Deportiva
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-3xl font-bold">Nueva Colección</h2>
+                <a href="#" class="text-pink-600 hover:text-pink-800 font-medium">Ver todos →</a>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" id="productsContainer">
+                <!-- Los productos se cargarán dinámicamente aquí -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Banner -->
+    <section class="py-16 bg-pink-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold mb-4" data-aos="fade-up">¡Hasta 50% de descuento en temporada!</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">Aprovecha nuestras ofertas especiales en ropa y accesorios de moda.</p>
+            <button class="bg-white text-pink-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg" data-aos="fade-up" data-aos-delay="200" id="comprarAhoraBanner">
+                Ver Ofertas
+            </button>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12">Lo que dicen nuestros clientes</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-6 rounded-lg" data-aos="fade-up">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">"La calidad de la ropa superó mis expectativas. Los envíos son rápidos y la talla es exacta."</p>
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Cliente" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <h4 class="font-medium">Laura Martínez</h4>
+                            <p class="text-gray-500 text-sm">Cliente desde 2023</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">"Siempre encuentro las últimas tendencias a precios increíbles. Mi tienda de moda favorita."</p>
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Cliente" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <h4 class="font-medium">Carlos Rodríguez</h4>
+                            <p class="text-gray-500 text-sm">Cliente desde 2022</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                            <i data-feather="star" class="w-4 h-4 fill-current text-gray-300"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">"Buena calidad y diseños modernos. La única sugerencia sería mejorar las guías de tallas."</p>
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Cliente" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <h4 class="font-medium">Ana García</h4>
+                            <p class="text-gray-500 text-sm">Cliente desde 2023</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-14 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
+                
+                <a href="tecnologia.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="bg-indigo-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                        <i data-feather="smartphone" class="text-indigo-600"></i>
+                    </div>
+                    <h3 class="font-medium">Tecnología</h3>
+                </a>
+
+                <a href="hogar.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="bg-green-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                        <i data-feather="home" class="text-green-600"></i>
+                    </div>
+                    <h3 class="font-medium">Hogar</h3>
+                </a>
+
+                <a href="belleza.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="bg-yellow-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                        <i data-feather="heart" class="text-yellow-600"></i>
+                    </div>
+                    <h3 class="font-medium">Belleza</h3>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <a href="#" class="flex items-center mb-4">
+                        <i data-feather="shopping-bag" class="text-pink-400"></i>
+                        <span class="ml-2 text-xl font-bold">StyleNexus</span>
+                    </a>
+                    <p class="text-gray-400">Tu destino para las últimas tendencias en moda y estilo de vida.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Compañía</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Sobre nosotros</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Trabaja con nosotros</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Blog de Moda</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Prensa</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Ayuda</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Guía de Tallas</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cambios y Devoluciones</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Política de privacidad</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Preguntas frecuentes</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Contacto</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400">📞 +57 1 234 5678</li>
+                        <li class="text-gray-400">✉️ info@stylenexus.com</li>
+                        <li class="text-gray-400">📍 Medellín, Colombia</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 StyleNexus. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // =====================
+        // Servicios SOA
+        // =====================
+
+        // Servicio de Autenticación (Auth Service)
+        const AuthService = (() => {
+            let usuario = null;
+            
+            return {
+                login: (email, password) => {
+                    // Simulación de autenticación
+                    const usuariosValidos = [
+                        { email: 'usuario@stylenexus.com', password: '123456', nombre: 'Usuario Demo' },
+                        { email: 'admin@stylenexus.com', password: 'admin123', nombre: 'Administrador' }
+                    ];
+                    
+                    const usuarioValido = usuariosValidos.find(u => 
+                        u.email === email && u.password === password
+                    );
+                    
+                    if (usuarioValido) {
+                        usuario = { ...usuarioValido };
+                        localStorage.setItem('usuario', JSON.stringify(usuario));
+                        return { exito: true, usuario: usuario };
+                    } else {
+                        return { exito: false, error: 'Credenciales incorrectas' };
+                    }
+                },
+                
+                logout: () => {
+                    usuario = null;
+                    localStorage.removeItem('usuario');
+                },
+                
+                getUsuario: () => {
+                    if (!usuario) {
+                        const usuarioStorage = localStorage.getItem('usuario');
+                        if (usuarioStorage) {
+                            usuario = JSON.parse(usuarioStorage);
+                        }
+                    }
+                    return usuario;
+                },
+                
+                estaAutenticado: () => {
+                    return this.getUsuario() !== null;
+                }
+            };
+        })();
+
+        // Servicio de Productos (Product Service) - Singleton
+        const ProductService = (() => {
+            let instance;
+            
+            function init() {
+                const productos = [
+                    { 
+                        id: 1, 
+                        nombre: "Vestido Elegante Negro", 
+                        precio: 189000,
+                        precioOriginal: 249000,
+                        categoria: "mujer",
+                        imagen: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Vestido midi perfecto para ocasiones especiales",
+                        tallas: ["XS", "S", "M", "L"]
+                    },
+                    { 
+                        id: 2, 
+                        nombre: "Camisa Casual Hombre", 
+                        precio: 89000,
+                        categoria: "hombre",
+                        imagen: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Camisa de algodón 100% para look casual",
+                        tallas: ["S", "M", "L", "XL"]
+                    },
+                    { 
+                        id: 3, 
+                        nombre: "Zapatos Deportivos Running", 
+                        precio: 299000,
+                        categoria: "calzado",
+                        imagen: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Zapatillas ideales para running y entrenamiento",
+                        tallas: ["38", "39", "40", "41", "42", "43"]
+                    },
+                    { 
+                        id: 4, 
+                        nombre: "Bolso Tote Cuero", 
+                        precio: 245000,
+                        categoria: "accesorios",
+                        imagen: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Bolso espacioso en cuero genuino"
+                    },
+                    { 
+                        id: 5, 
+                        nombre: "Jeans Skinny Mujer", 
+                        precio: 129000,
+                        precioOriginal: 159000,
+                        categoria: "mujer",
+                        imagen: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Jeans ajustados de talle alto",
+                        tallas: ["28", "30", "32", "34"]
+                    },
+                    { 
+                        id: 6, 
+                        nombre: "Chaqueta Denim Hombre", 
+                        precio: 199000,
+                        categoria: "hombre",
+                        imagen: "https://images.unsplash.com/photo-1551028719-00167b16eac5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Chaqueta de mezclilla clásica",
+                        tallas: ["S", "M", "L", "XL"]
+                    },
+                    { 
+                        id: 7, 
+                        nombre: "Set Deportivo Mujer", 
+                        precio: 149000,
+                        categoria: "deportiva",
+                        imagen: "https://images.unsplash.com/photo-1591369822096-ffd140ec948f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Conjunto deportivo transpirable",
+                        tallas: ["XS", "S", "M", "L"]
+                    },
+                    { 
+                        id: 8, 
+                        nombre: "Reloj Elegante", 
+                        precio: 389000,
+                        categoria: "accesorios",
+                        imagen: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        descripcion: "Reloj analógico con correa de cuero"
+                    }
+                ];
+                
+                return {
+                    listar: () => productos,
+                    buscar: (id) => productos.find(p => p.id === id),
+                    filtrarPorCategoria: (categoria) => {
+                        if (categoria === 'all') return productos;
+                        return productos.filter(p => p.categoria === categoria);
+                    }
+                };
+            }
+            
+            return {
+                getInstance: () => {
+                    if (!instance) {
+                        instance = init();
+                    }
+                    return instance;
+                }
+            };
+        })();
+
+        // Servicio de Carrito (Cart Service) con Observer
+        const CartService = (() => {
+            let carrito = [];
+            let observers = [];
+            
+            const notificarObservers = () => {
+                observers.forEach(observer => observer(carrito));
+            };
+            
+            // Cargar carrito desde localStorage
+            const cargarCarrito = () => {
+                const carritoStorage = localStorage.getItem('carrito');
+                if (carritoStorage) {
+                    carrito = JSON.parse(carritoStorage);
+                }
+            };
+            
+            // Guardar carrito en localStorage
+            const guardarCarrito = () => {
+                localStorage.setItem('carrito', JSON.stringify(carrito));
+            };
+            
+            // Inicializar cargado
+            cargarCarrito();
+            
+            return {
+                agregar: (producto, talla = null) => {
+                    const itemExistente = carrito.find(item => 
+                        item.id === producto.id && item.talla === talla
+                    );
+                    
+                    if (itemExistente) {
+                        itemExistente.cantidad += 1;
+                    } else {
+                        carrito.push({
+                            ...producto,
+                            cantidad: 1,
+                            talla: talla,
+                            fechaAgregado: new Date().toISOString()
+                        });
+                    }
+                    
+                    guardarCarrito();
+                    notificarObservers();
+                },
+                
+                eliminar: (id) => {
+                    carrito = carrito.filter(item => item.id !== id);
+                    guardarCarrito();
+                    notificarObservers();
+                },
+                
+                actualizarCantidad: (id, cantidad) => {
+                    const item = carrito.find(item => item.id === id);
+                    if (item) {
+                        if (cantidad <= 0) {
+                            this.eliminar(id);
+                        } else {
+                            item.cantidad = cantidad;
+                            guardarCarrito();
+                            notificarObservers();
+                        }
+                    }
+                },
+                
+                listar: () => [...carrito],
+                
+                vaciar: () => {
+                    carrito = [];
+                    guardarCarrito();
+                    notificarObservers();
+                },
+                
+                obtenerTotal: () => carrito.reduce((total, item) => total + (item.precio * item.cantidad), 0),
+                
+                obtenerCantidadTotal: () => carrito.reduce((total, item) => total + item.cantidad, 0),
+                
+                suscribir: (observer) => {
+                    observers.push(observer);
+                    observer(carrito); // Notificar estado actual
+                }
+            };
+        })();
+
+        // Servicio de Pagos (Payment Service) con Factory
+        const PaymentFactory = {
+            crearProcesador: (tipo) => {
+                const procesadores = {
+                    paypal: {
+                        nombre: "PayPal",
+                        procesar: (monto, usuario) => {
+                            return `Pago de $${monto.toLocaleString()} procesado con PayPal\nUsuario: ${usuario.nombre}`;
+                        }
+                    },
+                    stripe: {
+                        nombre: "Stripe",
+                        procesar: (monto, usuario) => {
+                            return `Pago de $${monto.toLocaleString()} procesado con Stripe\nUsuario: ${usuario.nombre}`;
+                        }
+                    },
+                    efectivo: {
+                        nombre: "Efectivo",
+                        procesar: (monto, usuario) => {
+                            return `Pago de $${monto.toLocaleString()} procesado en efectivo\nUsuario: ${usuario.nombre}`;
+                        }
+                    }
+                };
+                
+                return procesadores[tipo] || procesadores.efectivo;
+            }
+        };
+
+        // =====================
+        // Inicialización de la aplicación
+        // =====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar AOS
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+            
+            // Inicializar Feather Icons
+            feather.replace();
+            
+            // Obtener instancias de servicios
+            const productService = ProductService.getInstance();
+            
+            // Elementos del DOM
+            const loginModal = document.getElementById('loginModal');
+            const cartModal = document.getElementById('cartModal');
+            const loginButton = document.getElementById('loginButton');
+            const cartButton = document.getElementById('cartButton');
+            const closeLogin = document.getElementById('closeLogin');
+            const closeCart = document.getElementById('closeCart');
+            const loginForm = document.getElementById('loginForm');
+            const cartItems = document.getElementById('cartItems');
+            const emptyCart = document.getElementById('emptyCart');
+            const cartTotal = document.getElementById('cartTotal');
+            const shippingInfo = document.getElementById('shippingInfo');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const productsContainer = document.getElementById('productsContainer');
+            const categoryFilters = document.querySelectorAll('.category-filter');
+
+            // Función para renderizar productos
+            const renderizarProductos = (productos) => {
+                productsContainer.innerHTML = productos.map(producto => `
+                    <div class="product-card fashion-card rounded-lg overflow-hidden shadow-md transition duration-300" data-aos="fade-up" data-category="${producto.categoria}">
+                        <div class="relative">
+                            <img src="${producto.imagen}" alt="${producto.nombre}" class="w-full h-48 object-cover">
+                            ${producto.precioOriginal ? `
+                                <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                                    -${Math.round((1 - producto.precio/producto.precioOriginal) * 100)}%
+                                </span>
+                            ` : ''}
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-medium text-gray-900 mb-1">${producto.nombre}</h3>
+                            <p class="text-gray-500 text-sm mb-2">${producto.descripcion}</p>
+                            
+                            ${producto.tallas ? `
+                                <div class="size-selector">
+                                    ${producto.tallas.map(talla => `
+                                        <div class="size-option" data-talla="${talla}">${talla}</div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            <div class="flex items-center mb-2">
+                                <div class="flex text-yellow-400">
+                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
+                                </div>
+                                <span class="text-gray-500 text-xs ml-1">(${Math.floor(Math.random() * 100) + 50})</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    ${producto.precioOriginal ? `
+                                        <span class="text-gray-500 line-through text-sm">$${producto.precioOriginal.toLocaleString()}</span>
+                                    ` : ''}
+                                    <span class="text-pink-600 font-bold ml-2">$${producto.precio.toLocaleString()}</span>
+                                </div>
+                                <button data-id="${producto.id}" class="add-to-cart bg-pink-600 text-white p-2 rounded-full hover:bg-pink-700 transition">
+                                    <i data-feather="shopping-bag" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Reemplazar íconos feather
+                feather.replace();
+                
+                // Configurar selectores de tallas
+                document.querySelectorAll('.size-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        // Remover selección anterior
+                        this.parentElement.querySelectorAll('.size-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        // Seleccionar nueva talla
+                        this.classList.add('selected');
+                    });
+                });
+                
+                // Configurar event listeners para los botones de agregar al carrito
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const productId = parseInt(this.getAttribute('data-id'));
+                        const producto = productService.buscar(productId);
+                        
+                        if (producto) {
+                            // Obtener talla seleccionada si existe
+                            let tallaSeleccionada = null;
+                            const sizeSelector = this.closest('.product-card').querySelector('.size-selector');
+                            if (sizeSelector) {
+                                const selectedSize = sizeSelector.querySelector('.size-option.selected');
+                                if (selectedSize) {
+                                    tallaSeleccionada = selectedSize.getAttribute('data-talla');
+                                } else {
+                                    alert('Por favor selecciona una talla');
+                                    return;
+                                }
+                            }
+                            
+                            CartService.agregar(producto, tallaSeleccionada);
+                            
+                            // Efecto visual de confirmación
+                            this.classList.add('added');
+                            const originalHTML = this.innerHTML;
+                            this.innerHTML = '<i data-feather="check" class="w-5 h-5"></i>';
+                            feather.replace();
+                            
+                            setTimeout(() => {
+                                this.classList.remove('added');
+                                this.innerHTML = originalHTML;
+                                feather.replace();
+                            }, 1000);
+                        }
+                    });
+                });
+            };
+
+            // Función para actualizar la interfaz de usuario del carrito
+            const actualizarInterfazCarrito = (carrito) => {
+                const cantidadTotal = CartService.obtenerCantidadTotal();
+                const total = CartService.obtenerTotal();
+                
+                // Actualizar badge del carrito
+                document.querySelector('.cart-badge').textContent = cantidadTotal;
+                
+                // Actualizar modal del carrito
+                if (carrito.length === 0) {
+                    emptyCart.classList.remove('hidden');
+                    cartItems.innerHTML = '';
+                    checkoutBtn.disabled = true;
+                } else {
+                    emptyCart.classList.add('hidden');
+                    checkoutBtn.disabled = false;
+                    
+                    cartItems.innerHTML = carrito.map(item => `
+                        <div class="flex items-center justify-between border-b pb-4">
+                            <div class="flex items-center space-x-3">
+                                <img src="${item.imagen}" alt="${item.nombre}" class="w-12 h-12 object-cover rounded">
+                                <div>
+                                    <h4 class="font-medium text-sm">${item.nombre}</h4>
+                                    ${item.talla ? `<p class="text-gray-500 text-xs">Talla: ${item.talla}</p>` : ''}
+                                    <p class="text-pink-600 font-bold">$${item.precio.toLocaleString()}</p>
+                                    <div class="flex items-center space-x-2 mt-1">
+                                        <button onclick="actualizarCantidad(${item.id}, ${item.cantidad - 1})" 
+                                                class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs">-</button>
+                                        <span class="text-sm">${item.cantidad}</span>
+                                        <button onclick="actualizarCantidad(${item.id}, ${item.cantidad + 1})" 
+                                                class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="eliminarDelCarrito(${item.id})" 
+                                    class="cart-item-remove text-gray-400 hover:text-red-500">
+                                <i data-feather="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                    
+                    feather.replace();
+                }
+                
+                // Actualizar total y envío
+                cartTotal.textContent = `$${total.toLocaleString()}`;
+                
+                if (total > 200000) {
+                    shippingInfo.classList.remove('hidden');
+                } else {
+                    shippingInfo.classList.add('hidden');
+                }
+            };
+
+            // Funciones globales para los botones del carrito
+            window.eliminarDelCarrito = (id) => {
+                CartService.eliminar(id);
+            };
+
+            window.actualizarCantidad = (id, nuevaCantidad) => {
+                CartService.actualizarCantidad(id, nuevaCantidad);
+            };
+
+            // Configurar Observer para el carrito
+            CartService.suscribir(actualizarInterfazCarrito);
+
+            // Event Listeners para modales
+            loginButton.addEventListener('click', () => {
+                loginModal.style.display = 'block';
+            });
+
+            cartButton.addEventListener('click', () => {
+                cartModal.style.display = 'block';
+            });
+
+            closeLogin.addEventListener('click', () => {
+                loginModal.style.display = 'none';
+            });
+
+            closeCart.addEventListener('click', () => {
+                cartModal.style.display = 'none';
+            });
+
+            // Cerrar modales al hacer clic fuera
+            window.addEventListener('click', (e) => {
+                if (e.target === loginModal) {
+                    loginModal.style.display = 'none';
+                }
+                if (e.target === cartModal) {
+                    cartModal.style.display = 'none';
+                }
+            });
+
+            // Login Form
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                const resultado = AuthService.login(email, password);
+                
+                if (resultado.exito) {
+                    alert(`¡Bienvenido ${resultado.usuario.nombre}!`);
+                    loginModal.style.display = 'none';
+                    loginForm.reset();
+                    
+                    // Actualizar ícono de usuario
+                    loginButton.innerHTML = '<i data-feather="user-check" class="text-green-600"></i>';
+                    feather.replace();
+                } else {
+                    alert('Error: ' + resultado.error);
+                }
+            });
+
+            // Checkout
+            checkoutBtn.addEventListener('click', () => {
+                const usuario = AuthService.getUsuario();
+                if (!usuario) {
+                    alert('Por favor inicia sesión para continuar con la compra');
+                    loginModal.style.display = 'block';
+                    return;
+                }
+                
+                const carrito = CartService.listar();
+                if (carrito.length === 0) {
+                    alert('Tu carrito está vacío');
+                    return;
+                }
+                
+                const total = CartService.obtenerTotal();
+                let metodoPago = 'efectivo';
+                
+                if (total > 500000) {
+                    metodoPago = 'paypal';
+                } else if (total > 300000) {
+                    metodoPago = 'stripe';
+                }
+                
+                const procesador = PaymentFactory.crearProcesador(metodoPago);
+                const resultado = procesador.procesar(total, usuario);
+                
+                let mensaje = `✅ Compra realizada con éxito!\n\n${resultado}\n\n`;
+                mensaje += `👗 Productos comprados (${CartService.obtenerCantidadTotal()} items):\n`;
+                
+                carrito.forEach(item => {
+                    mensaje += `• ${item.nombre}${item.talla ? ` (Talla: ${item.talla})` : ''} x${item.cantidad} - $${(item.precio * item.cantidad).toLocaleString()}\n`;
+                });
+                
+                if (total > 200000) {
+                    mensaje += '\n🚚 ¡Envío gratis aplicado!';
+                }
+                
+                alert(mensaje);
+                
+                // Vaciar carrito después de la compra
+                CartService.vaciar();
+                cartModal.style.display = 'none';
+            });
+
+            // Filtros de categoría
+            categoryFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    // Remover clase active de todos los filtros
+                    categoryFilters.forEach(f => f.classList.remove('active', 'bg-pink-600', 'text-white'));
+                    categoryFilters.forEach(f => f.classList.add('bg-white', 'text-gray-700'));
+                    
+                    // Agregar clase active al filtro seleccionado
+                    this.classList.remove('bg-white', 'text-gray-700');
+                    this.classList.add('active', 'bg-pink-600', 'text-white');
+                    
+                    const categoria = this.getAttribute('data-category');
+                    const productos = productService.filtrarPorCategoria(categoria);
+                    renderizarProductos(productos);
+                });
+            });
+            
+            // Botón comprar ahora del Hero
+            document.getElementById('comprarAhoraHero').addEventListener('click', function() {
+                // Desplazarse a la sección de productos
+                document.getElementById('productsContainer').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Botón comprar ahora del Banner
+            document.getElementById('comprarAhoraBanner').addEventListener('click', function() {
+                const productosOfertas = productService.filtrarPorCategoria('all').filter(p => p.precioOriginal);
+                renderizarProductos(productosOfertas);
+                document.getElementById('productsContainer').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Verificar si hay usuario logueado al cargar la página
+            const usuario = AuthService.getUsuario();
+            if (usuario) {
+                loginButton.innerHTML = '<i data-feather="user-check" class="text-green-600"></i>';
+                feather.replace();
+            }
+
+            // Cargar productos iniciales
+            const productosIniciales = productService.listar();
+            renderizarProductos(productosIniciales);
+        });
+    </script>
+</body>
+</html>
