@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos | HogarExpress</title>
+    <title>Productos | NexusShop</title>
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -167,7 +167,7 @@
                 <div class="flex items-center">
                     <a href="#" class="flex items-center">
                         <i data-feather="home" class="text-indigo-600"></i>
-                        <span class="ml-2 text-xl font-bold text-gray-900">HogarExpress</span>
+                        <span class="ml-2 text-xl font-bold text-gray-900">NexusShop</span>
                     </a>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
@@ -274,6 +274,10 @@
                             <h4 class="font-medium text-gray-900 mb-3">Categorías</h4>
                             <div class="space-y-2">
                                 <label class="flex items-center">
+                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500" id="showAllProducts">
+                                    <span class="ml-2 text-gray-700 font-semibold text-indigo-600">Ver Todos</span>
+                                </label>
+                                <label class="flex items-center">
                                     <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500" data-category="muebles">
                                     <span class="ml-2 text-gray-700">Muebles</span>
                                     <span class="ml-auto text-gray-500 text-sm">(12)</span>
@@ -318,28 +322,6 @@
                             </div>
                         </div>
 
-                        <!-- Filtro por Marca -->
-                        <div class="mb-6">
-                            <h4 class="font-medium text-gray-900 mb-3">Marcas</h4>
-                            <div class="space-y-2">
-                                <label class="flex items-center">
-                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                    <span class="ml-2 text-gray-700">HomeStyle</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                    <span class="ml-2 text-gray-700">ComfortLiving</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                    <span class="ml-2 text-gray-700">EcoHome</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                    <span class="ml-2 text-gray-700">ModernHouse</span>
-                                </label>
-                            </div>
-                        </div>
 
                         <!-- Filtro por Calificación -->
                         <div class="mb-6">
@@ -440,7 +422,7 @@
                 <div>
                     <a href="#" class="flex items-center mb-4">
                         <i data-feather="home" class="text-indigo-400"></i>
-                        <span class="ml-2 text-xl font-bold">HogarExpress</span>
+                        <span class="ml-2 text-xl font-bold">NexusShop</span>
                     </a>
                     <p class="text-gray-400">Tu tienda de confianza para todos los productos que necesitas para tu hogar.</p>
                 </div>
@@ -466,13 +448,13 @@
                     <h3 class="font-bold text-lg mb-4">Contacto</h3>
                     <ul class="space-y-2">
                         <li class="text-gray-400">📞 +57 1 234 5678</li>
-                        <li class="text-gray-400">✉️ info@hogarexpress.com</li>
+                        <li class="text-gray-400">✉️ info@NexusShop.com</li>
                         <li class="text-gray-400">📍 Bogotá, Colombia</li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 HogarExpress. Todos los derechos reservados.</p>
+                <p>&copy; 2024 NexusShop. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
@@ -489,8 +471,8 @@
             return {
                 login: (email, password) => {
                     const usuariosValidos = [
-                        { email: 'usuario@hogarexpress.com', password: '123456', nombre: 'Usuario Demo' },
-                        { email: 'admin@hogarexpress.com', password: 'admin123', nombre: 'Administrador' }
+                        { email: 'usuario@NexusShop.com', password: '123456', nombre: 'Usuario Demo' },
+                        { email: 'admin@NexusShop.com', password: 'admin123', nombre: 'Administrador' }
                     ];
                     
                     const usuarioValido = usuariosValidos.find(u => 
@@ -1585,15 +1567,35 @@
             });
 
             // Configurar filtros por categoría
+            const showAllProducts = document.getElementById('showAllProducts');
             const checkboxesCategoria = document.querySelectorAll('input[data-category]');
+            
+            // Botón "Ver Todos"
+            showAllProducts.addEventListener('change', function() {
+                if (this.checked) {
+                    // Desmarcar todas las categorías
+                    checkboxesCategoria.forEach(cb => cb.checked = false);
+                    // Mostrar todos los productos
+                    renderizarProductos(productService.listar());
+                }
+            });
+            
+            // Event listener para cada categoría
             checkboxesCategoria.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
+                    // Si se marca una categoría, desmarcar "Ver Todos"
+                    if (this.checked) {
+                        showAllProducts.checked = false;
+                    }
+                    
                     const categoriasSeleccionadas = Array.from(checkboxesCategoria)
                         .filter(cb => cb.checked)
                         .map(cb => cb.getAttribute('data-category'));
                     
                     let productosFiltrados;
                     if (categoriasSeleccionadas.length === 0) {
+                        // Si no hay categorías seleccionadas, mostrar todos
+                        showAllProducts.checked = true;
                         productosFiltrados = productService.listar();
                     } else {
                         productosFiltrados = productService.listar().filter(producto => 
