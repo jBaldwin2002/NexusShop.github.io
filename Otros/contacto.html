@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,17 +16,21 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+
         .hero-gradient {
             background: linear-gradient(135deg, #4f46e5 0%, #7e22ce 100%);
         }
+
         .cart-badge {
             top: -10px;
             right: -10px;
         }
+
         .add-to-cart.added {
             background-color: #10b981 !important;
             color: white !important;
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -34,8 +39,9 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
         }
+
         .modal-content {
             background-color: white;
             margin: 10% auto;
@@ -45,28 +51,42 @@
             max-width: 400px;
             animation: modalSlideIn 0.3s ease-out;
         }
+
         @keyframes modalSlideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
+
         .cart-item-remove {
             transition: all 0.3s ease;
         }
+
         .cart-item-remove:hover {
             transform: scale(1.1);
             color: #ef4444;
         }
+
         .category-filter.active {
             background-color: #4f46e5;
             color: white;
         }
+
         .contact-card {
             transition: all 0.3s ease;
         }
+
         .contact-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
+
         .map-container {
             border-radius: 12px;
             overflow: hidden;
@@ -74,6 +94,7 @@
         }
     </style>
 </head>
+
 <body class="bg-gray-50">
     <!-- Navbar -->
     <nav class="bg-white shadow-sm sticky top-0 z-50">
@@ -94,7 +115,8 @@
                     </button>
                     <button id="cartButton" class="p-2 rounded-full hover:bg-gray-100 relative">
                         <i data-feather="shopping-cart" class="text-gray-600"></i>
-                        <span class="cart-badge absolute bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                        <span
+                            class="cart-badge absolute bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
                     </button>
                     <button id="loginButton" class="p-2 rounded-full hover:bg-gray-100">
                         <i data-feather="user" class="text-gray-600"></i>
@@ -114,7 +136,7 @@
             <div class="text-center mb-16" data-aos="fade-up">
                 <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Contáctanos</h1>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Estamos aquí para ayudarte. ¿Tienes preguntas sobre nuestros productos, envíos o necesitas asesoría? 
+                    Estamos aquí para ayudarte. ¿Tienes preguntas sobre nuestros productos, envíos o necesitas asesoría?
                     No dudes en contactarnos.
                 </p>
             </div>
@@ -124,7 +146,7 @@
                 <div class="lg:col-span-1" data-aos="fade-right">
                     <div class="bg-white rounded-2xl shadow-xl p-8 contact-card">
                         <h2 class="text-2xl font-bold text-gray-900 mb-8">Información de Contacto</h2>
-                        
+
                         <div class="space-y-6">
                             <!-- Teléfono -->
                             <div class="flex items-start">
@@ -183,13 +205,16 @@
                         <div class="mt-8 pt-8 border-t border-gray-200">
                             <h3 class="font-semibold text-gray-900 mb-4">Síguenos en redes sociales</h3>
                             <div class="flex space-x-4">
-                                <a href="#" class="bg-blue-100 text-blue-600 p-3 rounded-xl hover:bg-blue-200 transition">
+                                <a href="#"
+                                    class="bg-blue-100 text-blue-600 p-3 rounded-xl hover:bg-blue-200 transition">
                                     <i data-feather="facebook" class="w-5 h-5"></i>
                                 </a>
-                                <a href="#" class="bg-pink-100 text-pink-600 p-3 rounded-xl hover:bg-pink-200 transition">
+                                <a href="#"
+                                    class="bg-pink-100 text-pink-600 p-3 rounded-xl hover:bg-pink-200 transition">
                                     <i data-feather="instagram" class="w-5 h-5"></i>
                                 </a>
-                                <a href="#" class="bg-blue-100 text-blue-400 p-3 rounded-xl hover:bg-blue-200 transition">
+                                <a href="#"
+                                    class="bg-blue-100 text-blue-400 p-3 rounded-xl hover:bg-blue-200 transition">
                                     <i data-feather="twitter" class="w-5 h-5"></i>
                                 </a>
                                 <a href="#" class="bg-red-100 text-red-600 p-3 rounded-xl hover:bg-red-200 transition">
@@ -208,29 +233,31 @@
                         <form id="contactForm" class="space-y-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre Completo *</label>
-                                    <input type="text" required 
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                           placeholder="Tu nombre completo">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre Completo
+                                        *</label>
+                                    <input type="text" id="name" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                        placeholder="Tu nombre completo">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
-                                    <input type="email" required 
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                           placeholder="tu@email.com">
+                                    <input type="email" id="email" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                        placeholder="tu@email.com">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Teléfono</label>
-                                    <input type="tel" 
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                           placeholder="+57 300 123 4567">
+                                    <input type="tel" id="phone"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                        placeholder="+57 300 123 4567">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Asunto *</label>
-                                    <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                                    <select id="subject"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
                                         <option value="">Selecciona un asunto</option>
                                         <option value="consulta">Consulta general</option>
                                         <option value="producto">Información de producto</option>
@@ -244,20 +271,21 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Mensaje *</label>
-                                <textarea rows="5" required
-                                          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                          placeholder="Describe tu consulta o mensaje..."></textarea>
+                                <textarea id="message" rows="5" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                    placeholder="Describe tu consulta o mensaje..."></textarea>
                             </div>
 
                             <div class="flex items-center">
-                                <input type="checkbox" id="newsletter" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                <input type="checkbox" id="newsletter"
+                                    class="rounded text-indigo-600 focus:ring-indigo-500">
                                 <label for="newsletter" class="ml-2 text-sm text-gray-600">
                                     Deseo recibir información sobre promociones y novedades
                                 </label>
                             </div>
 
-                            <button type="submit" 
-                                    class="w-full bg-indigo-600 text-white py-4 px-6 rounded-xl font-semibold hover:bg-indigo-700 transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            <button type="submit"
+                                class="w-full bg-indigo-600 text-white py-4 px-6 rounded-xl font-semibold hover:bg-indigo-700 transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                                 <i data-feather="send" class="w-5 h-5 inline mr-2"></i>
                                 Enviar Mensaje
                             </button>
@@ -272,13 +300,9 @@
                         </div>
                         <div class="map-container">
                             <!-- Mapa de Google Maps embebido -->
-                            <iframe 
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.785231263031!2d-74.0559499250181!3d4.648129241639671!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9c0c1c1c1c1d%3A0x1c1c1c1c1c1c1c1c!2sBogot%C3%A1%2C%20Colombia!5e0!3m2!1ses!2sco!4v1234567890" 
-                                width="100%" 
-                                height="300" 
-                                style="border:0;" 
-                                allowfullscreen="" 
-                                loading="lazy" 
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.785231263031!2d-74.0559499250181!3d4.648129241639671!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9c0c1c1c1c1d%3A0x1c1c1c1c1c1c1c1c!2sBogot%C3%A1%2C%20Colombia!5e0!3m2!1ses!2sco!4v1234567890"
+                                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"
                                 referrerpolicy="no-referrer-when-downgrade">
                             </iframe>
                         </div>
@@ -288,9 +312,8 @@
                                     <h4 class="font-semibold text-gray-900">Cómo llegar</h4>
                                     <p class="text-gray-600 text-sm">Carrera 5 21-38, Bogotá, D.C</p>
                                 </div>
-                                <a href="https://maps.google.com/?q=Carrera+5+21-38+Bogota" 
-                                   target="_blank"
-                                   class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center">
+                                <a href="https://maps.google.com/?q=Carrera+5+21-38+Bogota" target="_blank"
+                                    class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center">
                                     <i data-feather="navigation" class="w-4 h-4 mr-2"></i>
                                     Direcciones
                                 </a>
@@ -304,9 +327,10 @@
             <div class="mt-20" data-aos="fade-up">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl font-bold text-gray-900 mb-4">Preguntas Frecuentes</h2>
-                    <p class="text-gray-600 max-w-2xl mx-auto">Resolvemos tus dudas más comunes sobre compras, envíos y garantías</p>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Resolvemos tus dudas más comunes sobre compras, envíos y
+                        garantías</p>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- FAQ Item 1 -->
                     <div class="bg-white rounded-xl p-6 shadow-lg">
@@ -314,7 +338,8 @@
                             <i data-feather="truck" class="text-indigo-600 w-5 h-5 mr-3"></i>
                             ¿Cuáles son los tiempos de entrega?
                         </h3>
-                        <p class="text-gray-600">Los envíos dentro de Bogotá tardan 1-2 días hábiles. Para otras ciudades, el tiempo estimado es de 3-5 días hábiles.</p>
+                        <p class="text-gray-600">Los envíos dentro de Bogotá tardan 1-2 días hábiles. Para otras
+                            ciudades, el tiempo estimado es de 3-5 días hábiles.</p>
                     </div>
 
                     <!-- FAQ Item 2 -->
@@ -323,7 +348,8 @@
                             <i data-feather="rotate-ccw" class="text-green-600 w-5 h-5 mr-3"></i>
                             ¿Cuál es la política de devoluciones?
                         </h3>
-                        <p class="text-gray-600">Aceptamos devoluciones dentro de los 30 días posteriores a la compra. El producto debe estar en perfecto estado y en su empaque original.</p>
+                        <p class="text-gray-600">Aceptamos devoluciones dentro de los 30 días posteriores a la compra.
+                            El producto debe estar en perfecto estado y en su empaque original.</p>
                     </div>
 
                     <!-- FAQ Item 3 -->
@@ -332,7 +358,8 @@
                             <i data-feather="credit-card" class="text-blue-600 w-5 h-5 mr-3"></i>
                             ¿Qué métodos de pago aceptan?
                         </h3>
-                        <p class="text-gray-600">Aceptamos tarjetas de crédito/débito, transferencias bancarias, PSE y pagos en efectivo en nuestros puntos autorizados.</p>
+                        <p class="text-gray-600">Aceptamos tarjetas de crédito/débito, transferencias bancarias, PSE y
+                            pagos en efectivo en nuestros puntos autorizados.</p>
                     </div>
 
                     <!-- FAQ Item 4 -->
@@ -341,7 +368,8 @@
                             <i data-feather="shield" class="text-purple-600 w-5 h-5 mr-3"></i>
                             ¿Ofrecen garantía en los productos?
                         </h3>
-                        <p class="text-gray-600">Sí, todos nuestros productos cuentan con garantía del fabricante. La duración varía según el producto, desde 6 meses hasta 2 años.</p>
+                        <p class="text-gray-600">Sí, todos nuestros productos cuentan con garantía del fabricante. La
+                            duración varía según el producto, desde 6 meses hasta 2 años.</p>
                     </div>
                 </div>
             </div>
@@ -357,7 +385,8 @@
                         <i data-feather="home" class="text-indigo-400"></i>
                         <span class="ml-2 text-xl font-bold">NexusShop</span>
                     </a>
-                    <p class="text-gray-400">Tu tienda de confianza para todos los productos que necesitas para tu hogar.</p>
+                    <p class="text-gray-400">Tu tienda de confianza para todos los productos que necesitas para tu
+                        hogar.</p>
                 </div>
                 <div>
                     <h3 class="font-bold text-lg mb-4">Compañía</h3>
@@ -372,8 +401,10 @@
                     <h3 class="font-bold text-lg mb-4">Ayuda</h3>
                     <ul class="space-y-2">
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Centro de ayuda</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Términos y condiciones</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Política de privacidad</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Términos y condiciones</a>
+                        </li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Política de privacidad</a>
+                        </li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Devoluciones</a></li>
                     </ul>
                 </div>
@@ -392,29 +423,30 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
         // =====================
         // Inicialización
         // =====================
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Inicializar AOS
             AOS.init({
                 duration: 800,
                 easing: 'ease-in-out',
                 once: true
             });
-            
+
             // Inicializar Feather Icons
             feather.replace();
-            
+
             // Configurar el scroll suave para el enlace de contacto
             const contactoLink = document.querySelector('a[href="#contacto"]');
             if (contactoLink) {
-                contactoLink.addEventListener('click', function(e) {
+                contactoLink.addEventListener('click', function (e) {
                     e.preventDefault();
                     const contactoSection = document.getElementById('contacto');
                     if (contactoSection) {
-                        contactoSection.scrollIntoView({ 
+                        contactoSection.scrollIntoView({
                             behavior: 'smooth',
                             block: 'start'
                         });
@@ -422,37 +454,57 @@
                 });
             }
 
-            // Manejar el formulario de contacto
+            // Supabase: configura tu URL y ANON KEY (sustituye antes de desplegar)
+            const SUPABASE_URL = 'https://<TU_PROYECTO>.supabase.co';
+            const SUPABASE_ANON_KEY = '<TU_ANON_KEY>';
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // Manejar el formulario de contacto (envío a Supabase)
             const contactForm = document.getElementById('contactForm');
             if (contactForm) {
-                contactForm.addEventListener('submit', function(e) {
+                contactForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
-                    
-                    // Simular envío del formulario
+
                     const submitBtn = contactForm.querySelector('button[type="submit"]');
                     const originalText = submitBtn.innerHTML;
-                    
                     submitBtn.innerHTML = '<i data-feather="loader" class="w-5 h-5 inline mr-2 animate-spin"></i>Enviando...';
                     submitBtn.disabled = true;
-                    
-                    setTimeout(() => {
+
+                    const name = document.getElementById('name').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const phone = document.getElementById('phone').value.trim();
+                    const subject = document.getElementById('subject').value;
+                    const message = document.getElementById('message').value.trim();
+                    const newsletter = document.getElementById('newsletter').checked;
+
+                    try {
+                        const { data, error } = await supabaseClient
+                            .from('contacts')
+                            .insert([{ name, email, phone, subject, message, newsletter }]);
+
+                        if (error) throw error;
+
                         alert('¡Mensaje enviado con éxito! Te contactaremos pronto.');
                         contactForm.reset();
+                    } catch (err) {
+                        console.error('Supabase error:', err);
+                        alert('Error enviando el mensaje. Revisa la consola.');
+                    } finally {
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
                         feather.replace();
-                    }, 2000);
+                    }
                 });
             }
 
             // Efectos hover para las cards de contacto
             const contactCards = document.querySelectorAll('.contact-card');
             contactCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
+                card.addEventListener('mouseenter', function () {
                     this.style.transform = 'translateY(-5px)';
                 });
-                
-                card.addEventListener('mouseleave', function() {
+
+                card.addEventListener('mouseleave', function () {
                     this.style.transform = 'translateY(0)';
                 });
             });
@@ -477,4 +529,5 @@
         };
     </script>
 </body>
+
 </html>
