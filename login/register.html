@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - NexusShop</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Crear Cuenta</h1>
+            <p>Únete a NexusShop hoy</p>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <form id="registerForm" class="auth-form">
+            <!-- Nombre Completo -->
+            <div class="form-group">
+                <label for="fullName">Nombre Completo</label>
+                <input type="text" id="fullName" name="fullName" placeholder="NexusShop" required>
+                <div class="validation-message" id="fullNameError"></div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                <div class="validation-message" id="emailError"></div>
+            </div>
+
+            <!-- Teléfono (Opcional) -->
+            <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" id="phone" name="phone" placeholder="123 456 7890">
+                <div class="validation-message" id="phoneError"></div>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required>
+                <div class="password-strength">
+                    <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                </div>
+                <div class="validation-message" id="passwordError"></div>
+                <small style="color: #999; display: block; margin-top: 8px;">
+                    Mínimo 8 caracteres, 1 mayúscula y 1 número
+                </small>
+            </div>
+
+            <!-- Confirmar Contraseña -->
+            <div class="form-group">
+                <label for="confirmPassword">Confirmar Contraseña</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repite tu contraseña"
+                    required>
+                <div class="validation-message" id="confirmPasswordError"></div>
+            </div>
+
+            <!-- Términos y Condiciones -->
+            <div class="form-group" style="display: flex; align-items: center; margin-bottom: 25px;">
+                <input type="checkbox" id="terms" name="terms" required
+                    style="width: auto; margin-right: 10px; cursor: pointer;">
+                <label for="terms" style="margin-bottom: 0; font-size: 13px;">
+                    Acepto los <button type="button" class="btn-link"
+                        onclick="alert('Términos y Condiciones aquí')">Términos y Condiciones</button>
+                </label>
+            </div>
+
+            <!-- Botón Enviar -->
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                Crear Cuenta
+            </button>
+        </form>
+
+        <!-- Toggle a Login -->
+        <div class="form-toggle">
+            <p>¿Ya tienes cuenta?
+                <button type="button" class="btn-link" onclick="window.location.href='login.html'">
+                    Inicia sesión aquí
+                </button>
+            </p>
+        </div>
+
+        <!-- Links Útiles -->
+        <div class="auth-links">
+            <a href="../index.html">← Volver a inicio</a>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Importar funciones de autenticación
+        import { registerUser, validateEmail, validatePassword, getErrorMessage } from './auth.js'
+
+        const form = document.getElementById('registerForm')
+        const fullNameInput = document.getElementById('fullName')
+        const emailInput = document.getElementById('email')
+        const phoneInput = document.getElementById('phone')
+        const passwordInput = document.getElementById('password')
+        const confirmPasswordInput = document.getElementById('confirmPassword')
+        const submitBtn = document.getElementById('submitBtn')
+        const alertContainer = document.getElementById('alertContainer')
+
+        // Validación en tiempo real de contraseña
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value
+            const bar = document.getElementById('passwordStrengthBar')
+            bar.className = 'password-strength-bar'
+
+            if (password.length === 0) {
+                bar.style.width = '0%'
+            } else if (password.length < 8) {
+                bar.classList.add('weak')
+            } else if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+                bar.classList.add('fair')
+            } else if (password.length < 12) {
+                bar.classList.add('good')
+            } else {
+                bar.classList.add('strong')
+            }
+        })
+
+        // Validación de email
+        emailInput.addEventListener('blur', () => {
+            const errorMsg = document.getElementById('emailError')
+            if (emailInput.value && !validateEmail(emailInput.value)) {
+                errorMsg.textContent = 'Email no válido'
+                errorMsg.classList.add('show')
+                emailInput.style.borderColor = '#e74c3c'
+            } else {
+                errorMsg.classList.remove('show')
+                emailInput.style.borderColor = '#e0e0e0'
+            }
+        })
+
+        // Validación de contraseña
+        passwordInput.addEventListener('blur', () => {
+            const errorMsg = document.getElementById('passwordError')
+            if (passwordInput.value && !validatePassword(passwordInput.value)) {
+                errorMsg.textContent = 'Mín. 8 caracteres, 1 mayúscula y 1 número'
+                errorMsg.classList.add('show')
+                passwordInput.style.borderColor = '#e74c3c'
+            } else {
+                errorMsg.classList.remove('show')
+                passwordInput.style.borderColor = '#e0e0e0'
+            }
+        })
+
+        // Validación de confirmación de contraseña
+        confirmPasswordInput.addEventListener('blur', () => {
+            const errorMsg = document.getElementById('confirmPasswordError')
+            if (confirmPasswordInput.value !== passwordInput.value) {
+                errorMsg.textContent = 'Las contraseñas no coinciden'
+                errorMsg.classList.add('show')
+                confirmPasswordInput.style.borderColor = '#e74c3c'
+            } else {
+                errorMsg.classList.remove('show')
+                confirmPasswordInput.style.borderColor = '#e0e0e0'
+            }
+        })
+
+        // Manejo del formulario
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault()
+
+            // Validaciones
+            const fullName = fullNameInput.value.trim()
+            const email = emailInput.value.trim()
+            const phone = phoneInput.value.trim()
+            const password = passwordInput.value
+            const confirmPassword = confirmPasswordInput.value
+            const termsAccepted = document.getElementById('terms').checked
+
+            if (!fullName) {
+                showAlert('El nombre es requerido', 'error')
+                return
+            }
+
+            if (!validateEmail(email)) {
+                showAlert('Email inválido', 'error')
+                return
+            }
+
+            if (!validatePassword(password)) {
+                showAlert('Contraseña débil: mínimo 8 caracteres, 1 mayúscula y 1 número', 'error')
+                return
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('Las contraseñas no coinciden', 'error')
+                return
+            }
+
+            if (!termsAccepted) {
+                showAlert('Debes aceptar los términos y condiciones', 'error')
+                return
+            }
+
+            // Deshabilitar botón y mostrar loader
+            submitBtn.disabled = true
+            submitBtn.innerHTML = '<span class="loader"></span>Registrando...'
+
+            // Intentar registrar
+            const { user, error } = await registerUser(email, password, {
+                fullName,
+                phone
+            })
+
+            if (error) {
+                showAlert(error, 'error')
+                submitBtn.disabled = false
+                submitBtn.innerHTML = 'Crear Cuenta'
+            } else {
+                showAlert('¡Cuenta creada exitosamente! Revisa tu email para confirmar.', 'success')
+                form.reset()
+                document.getElementById('passwordStrengthBar').style.width = '0%'
+                setTimeout(() => {
+                    window.location.href = 'login.html'
+                }, 2000)
+            }
+        })
+
+        // Función para mostrar alertas
+        function showAlert(message, type) {
+            const alert = document.createElement('div')
+            alert.className = `alert alert-${type}`
+            alert.innerHTML = `
+        ${message}
+        <button onclick="this.parentElement.remove()">×</button>
+      `
+            alertContainer.innerHTML = ''
+            alertContainer.appendChild(alert)
+
+            if (type === 'success') {
+                setTimeout(() => alert.remove(), 4000)
+            }
+        }
+    </script>
+</body>
+
+</html>

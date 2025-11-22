@@ -1,10 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusShop | Tienda Online</title>
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <!-- Supabase Configuration -->
+    <script>
+        window.SUPABASE_CONFIG = {
+            URL: localStorage.getItem('supabase_url') || 'https://your-project.supabase.co',
+            ANON_KEY: localStorage.getItem('supabase_anon_key') || 'your_anon_public_key_here'
+        }
+    </script>
+
+    <!-- Console Helper para Supabase -->
+    <script src="console-helper.js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -15,17 +28,21 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+
         .hero-gradient {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+
         .cart-badge {
             top: -10px;
             right: -10px;
         }
+
         .add-to-cart.added {
             background-color: #10b981 !important;
             color: white !important;
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -34,8 +51,9 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
         }
+
         .modal-content {
             background-color: white;
             margin: 10% auto;
@@ -45,19 +63,30 @@
             max-width: 400px;
             animation: modalSlideIn 0.3s ease-out;
         }
+
         @keyframes modalSlideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
+
         .cart-item-remove {
             transition: all 0.3s ease;
         }
+
         .cart-item-remove:hover {
             transform: scale(1.1);
             color: #ef4444;
         }
     </style>
 </head>
+
 <body class="bg-gray-50">
     <!-- Modal de Login -->
     <div id="loginModal" class="modal">
@@ -72,21 +101,22 @@
                 <form id="loginForm" class="space-y-4">
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" id="email" required 
-                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <input type="email" id="email" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
-                        <input type="password" id="password" required 
-                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <input type="password" id="password" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
-                    <button type="submit" 
-                            class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-200">
+                    <button type="submit"
+                        class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-200">
                         Iniciar Sesión
                     </button>
                 </form>
                 <div class="mt-4 text-center">
-                    <p class="text-sm text-gray-600">¿No tienes cuenta? <a href="#" class="text-indigo-600 hover:underline">Regístrate</a></p>
+                    <p class="text-sm text-gray-600">¿No tienes cuenta? <a href="#"
+                            class="text-indigo-600 hover:underline">Regístrate</a></p>
                 </div>
             </div>
         </div>
@@ -118,8 +148,8 @@
                 <div id="shippingInfo" class="text-green-600 text-sm mb-4 hidden">
                     🚚 ¡Envío gratis aplicado!
                 </div>
-                <button id="checkoutBtn" 
-                        class="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                <button id="checkoutBtn"
+                    class="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                     Proceder al Pago
                 </button>
             </div>
@@ -140,6 +170,7 @@
                     <a href="Otros/productos.html" class="text-gray-700 hover:text-indigo-600 transition">Productos</a>
                     <a href="#" class="text-gray-700 hover:text-indigo-600 transition">Ofertas</a>
                     <a href="Otros/contacto.html" class="text-gray-700 hover:text-indigo-600 transition">Contacto</a>
+                    <a href="login/register.html" class="text-gray-700 hover:text-indigo-600 transition">Registrarse</a>
                 </div>
                 <div class="flex items-center space-x-4">
                     <button class="p-2 rounded-full hover:bg-gray-100">
@@ -147,11 +178,12 @@
                     </button>
                     <button id="cartButton" class="p-2 rounded-full hover:bg-gray-100 relative">
                         <i data-feather="shopping-cart" class="text-gray-600"></i>
-                        <span class="cart-badge absolute bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                        <span
+                            class="cart-badge absolute bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
                     </button>
-                    <button id="loginButton" class="p-2 rounded-full hover:bg-gray-100">
+                    <a href="login/login.html" class="p-2 rounded-full hover:bg-gray-100">
                         <i data-feather="user" class="text-gray-600"></i>
-                    </button>
+                    </a>
                     <button class="md:hidden p-2 rounded-full hover:bg-gray-100">
                         <i data-feather="menu" class="text-gray-600"></i>
                     </button>
@@ -166,8 +198,11 @@
             <div class="flex flex-col md:flex-row items-center">
                 <div class="md:w-1/2 mb-10 md:mb-0" data-aos="fade-right">
                     <h1 class="text-4xl md:text-5xl font-bold mb-4">Descubre los mejores productos</h1>
-                    <p class="text-xl mb-8">Encuentra todo lo que necesitas en un solo lugar con envíos rápidos y seguros.</p>
-                    <button class="bg-white text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg" id="comprarAhoraHero">
+                    <p class="text-xl mb-8">Encuentra todo lo que necesitas en un solo lugar con envíos rápidos y
+                        seguros.</p>
+                    <button
+                        class="bg-white text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg"
+                        id="comprarAhoraHero">
                         Comprar ahora
                     </button>
                 </div>
@@ -183,28 +218,36 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-center mb-12">Categorías</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <a href="Categorias/tecnologia.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition" data-aos="zoom-in">
+                <a href="Categorias/tecnologia.html"
+                    class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition"
+                    data-aos="zoom-in">
                     <div class="bg-indigo-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
                         <i data-feather="smartphone" class="text-indigo-600"></i>
                     </div>
                     <h3 class="font-medium">Tecnología</h3>
                 </a>
 
-                <a href="Categorias/Hogar.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="100">
+                <a href="Categorias/Hogar.html"
+                    class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition"
+                    data-aos="zoom-in" data-aos-delay="100">
                     <div class="bg-green-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
                         <i data-feather="home" class="text-green-600"></i>
                     </div>
                     <h3 class="font-medium">Hogar</h3>
                 </a>
 
-                <a href="Categorias/moda.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="200">
+                <a href="Categorias/moda.html"
+                    class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition"
+                    data-aos="zoom-in" data-aos-delay="200">
                     <div class="bg-blue-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
                         <i data-feather="shopping-bag" class="text-blue-600"></i>
                     </div>
                     <h3 class="font-medium">Moda</h3>
                 </a>
-                
-                <a href="Categorias/belleza.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="300">
+
+                <a href="Categorias/belleza.html"
+                    class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition"
+                    data-aos="zoom-in" data-aos-delay="300">
                     <div class="bg-yellow-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
                         <i data-feather="heart" class="text-yellow-600"></i>
                     </div>
@@ -223,10 +266,13 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Product 1 -->
-                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-aos="fade-up">
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"
+                    data-aos="fade-up">
                     <div class="relative">
-                        <img src="https://co.tiendasishop.com/cdn/shop/files/IMG-18067830_m_jpeg_1_ae6c1c05-e8de-40b8-b0cc-9e8ff95c9ab6.jpg?v=1757469574&width=823" alt="Producto" class="w-full h-48 object-cover">
-                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">Oferta</span>
+                        <img src="https://co.tiendasishop.com/cdn/shop/files/IMG-18067830_m_jpeg_1_ae6c1c05-e8de-40b8-b0cc-9e8ff95c9ab6.jpg?v=1757469574&width=823"
+                            alt="Producto" class="w-full h-48 object-cover">
+                        <span
+                            class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">Oferta</span>
                     </div>
                     <div class="p-4">
                         <h3 class="font-medium text-gray-900 mb-1">Iphone 17 Pro</h3>
@@ -251,11 +297,13 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Product 2 -->
-                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-aos="fade-up" data-aos-delay="100">
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"
+                    data-aos="fade-up" data-aos-delay="100">
                     <div class="relative">
-                        <img src="https://exitocol.vtexassets.com/arquivos/ids/24975256/audifonos-inalambricos-bluetooth-over-ear-diadema-estereo-p9-plateado.jpg?v=638639410899930000" alt="Producto" class="w-full h-48 object-cover">
+                        <img src="https://exitocol.vtexassets.com/arquivos/ids/24975256/audifonos-inalambricos-bluetooth-over-ear-diadema-estereo-p9-plateado.jpg?v=638639410899930000"
+                            alt="Producto" class="w-full h-48 object-cover">
                     </div>
                     <div class="p-4">
                         <h3 class="font-medium text-gray-900 mb-1">Auriculares Inalámbricos</h3>
@@ -277,11 +325,13 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Product 3 -->
-                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-aos="fade-up" data-aos-delay="200">
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"
+                    data-aos="fade-up" data-aos-delay="200">
                     <div class="relative">
-                        <img src="https://micelu.co/wp-content/uploads/2024/08/SMART-WATCH-S1-A.png" alt="Producto" class="w-full h-48 object-cover">
+                        <img src="https://micelu.co/wp-content/uploads/2024/08/SMART-WATCH-S1-A.png" alt="Producto"
+                            class="w-full h-48 object-cover">
                     </div>
                     <div class="p-4">
                         <h3 class="font-medium text-gray-900 mb-1">Smartwatch Pro</h3>
@@ -303,12 +353,15 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Product 4 -->
-                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-aos="fade-up" data-aos-delay="300">
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"
+                    data-aos="fade-up" data-aos-delay="300">
                     <div class="relative">
-                        <img src="https://img01.ztat.net/article/spp-media-p1/b423bfaa440240af8efac869017a5780/b6db73aaa73a4085b8c11d4e205eaed3.jpg?imwidth=762" alt="Producto" class="w-full h-48 object-cover">
-                        <span class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">Nuevo</span>
+                        <img src="https://img01.ztat.net/article/spp-media-p1/b423bfaa440240af8efac869017a5780/b6db73aaa73a4085b8c11d4e205eaed3.jpg?imwidth=762"
+                            alt="Producto" class="w-full h-48 object-cover">
+                        <span
+                            class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">Nuevo</span>
                     </div>
                     <div class="p-4">
                         <h3 class="font-medium text-gray-900 mb-1">Camiseta Lacoste</h3>
@@ -338,8 +391,11 @@
     <section class="py-16 bg-indigo-600 text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl font-bold mb-4" data-aos="fade-up">¡Envío gratis en compras mayores a $250.000!</h2>
-            <p class="text-xl mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">Aprovecha esta promoción por tiempo limitado en todos nuestros productos.</p>
-            <button class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg" data-aos="fade-up" data-aos-delay="200" id="comprarAhoraBanner">
+            <p class="text-xl mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">Aprovecha esta promoción
+                por tiempo limitado en todos nuestros productos.</p>
+            <button
+                class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg"
+                data-aos="fade-up" data-aos-delay="200" id="comprarAhoraBanner">
                 Comprar ahora
             </button>
         </div>
@@ -360,9 +416,11 @@
                             <i data-feather="star" class="w-4 h-4 fill-current"></i>
                         </div>
                     </div>
-                    <p class="text-gray-700 mb-4">"Excelente servicio al cliente y productos de alta calidad. ¡Volveré a comprar!"</p>
+                    <p class="text-gray-700 mb-4">"Excelente servicio al cliente y productos de alta calidad. ¡Volveré a
+                        comprar!"</p>
                     <div class="flex items-center">
-                        <img src="http://static.photos/people/200x200/1" alt="Cliente" class="w-10 h-10 rounded-full mr-3">
+                        <img src="http://static.photos/people/200x200/1" alt="Cliente"
+                            class="w-10 h-10 rounded-full mr-3">
                         <div>
                             <h4 class="font-medium">Laura Beltran</h4>
                             <p class="text-gray-500 text-sm">Cliente desde 2025</p>
@@ -379,9 +437,11 @@
                             <i data-feather="star" class="w-4 h-4 fill-current"></i>
                         </div>
                     </div>
-                    <p class="text-gray-700 mb-4">"El envío fue súper rápido y el producto llegó en perfectas condiciones. Muy recomendado."</p>
+                    <p class="text-gray-700 mb-4">"El envío fue súper rápido y el producto llegó en perfectas
+                        condiciones. Muy recomendado."</p>
                     <div class="flex items-center">
-                        <img src="http://static.photos/people/200x200/2" alt="Cliente" class="w-10 h-10 rounded-full mr-3">
+                        <img src="http://static.photos/people/200x200/2" alt="Cliente"
+                            class="w-10 h-10 rounded-full mr-3">
                         <div>
                             <h4 class="font-medium">Baldwin Palencia</h4>
                             <p class="text-gray-500 text-sm">Cliente desde 2021</p>
@@ -398,9 +458,11 @@
                             <i data-feather="star" class="w-4 h-4 fill-current text-gray-300"></i>
                         </div>
                     </div>
-                    <p class="text-gray-700 mb-4">"Buena relación calidad-precio. El único detalle fue que el paquete llegó un día después de lo esperado."</p>
+                    <p class="text-gray-700 mb-4">"Buena relación calidad-precio. El único detalle fue que el paquete
+                        llegó un día después de lo esperado."</p>
                     <div class="flex items-center">
-                        <img src="http://static.photos/people/200x200/3" alt="Cliente" class="w-10 h-10 rounded-full mr-3">
+                        <img src="http://static.photos/people/200x200/3" alt="Cliente"
+                            class="w-10 h-10 rounded-full mr-3">
                         <div>
                             <h4 class="font-medium">Jean Herrera</h4>
                             <p class="text-gray-500 text-sm">Cliente desde 2023</p>
@@ -415,10 +477,13 @@
     <section class="py-16 bg-gray-50">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl font-bold mb-4" data-aos="fade-up">Suscríbete a nuestro boletín</h2>
-            <p class="text-gray-600 mb-8" data-aos="fade-up" data-aos-delay="100">Recibe ofertas exclusivas y novedades directamente en tu correo.</p>
+            <p class="text-gray-600 mb-8" data-aos="fade-up" data-aos-delay="100">Recibe ofertas exclusivas y novedades
+                directamente en tu correo.</p>
             <form class="flex flex-col sm:flex-row gap-2" data-aos="fade-up" data-aos-delay="200">
-                <input type="email" placeholder="Tu correo electrónico" class="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition">
+                <input type="email" placeholder="Tu correo electrónico"
+                    class="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button type="submit"
+                    class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition">
                     Suscribirse
                 </button>
             </form>
@@ -434,7 +499,8 @@
                         <i data-feather="shopping-bag" class="text-indigo-400"></i>
                         <span class="ml-2 text-xl font-bold">NexusShop</span>
                     </a>
-                    <p class="text-gray-400">La mejor plataforma de e-commerce con los productos más innovadores y de alta calidad.</p>
+                    <p class="text-gray-400">La mejor plataforma de e-commerce con los productos más innovadores y de
+                        alta calidad.</p>
                 </div>
                 <div>
                     <h3 class="font-bold text-lg mb-4">Compañía</h3>
@@ -449,12 +515,14 @@
                     <h3 class="font-bold text-lg mb-4">Ayuda</h3>
                     <ul class="space-y-2">
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Centro de ayuda</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Términos y condiciones</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Política de privacidad</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Términos y condiciones</a>
+                        </li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Política de privacidad</a>
+                        </li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Devoluciones</a></li>
                     </ul>
                 </div>
-                 <div>
+                <div>
                     <h3 class="font-bold text-lg mb-4">Contacto</h3>
                     <ul class="space-y-2">
                         <li class="text-gray-400">📞 +57 1 234 5678</li>
@@ -477,7 +545,7 @@
         // Servicio de Autenticación (Auth Service)
         const AuthService = (() => {
             let usuario = null;
-            
+
             return {
                 login: (email, password) => {
                     // Simulación de autenticación
@@ -485,11 +553,11 @@
                         { email: 'usuario@nexusshop.com', password: '123456', nombre: 'Usuario Demo' },
                         { email: 'admin@nexusshop.com', password: 'admin123', nombre: 'Administrador' }
                     ];
-                    
-                    const usuarioValido = usuariosValidos.find(u => 
+
+                    const usuarioValido = usuariosValidos.find(u =>
                         u.email === email && u.password === password
                     );
-                    
+
                     if (usuarioValido) {
                         usuario = { ...usuarioValido };
                         localStorage.setItem('usuario', JSON.stringify(usuario));
@@ -498,12 +566,12 @@
                         return { exito: false, error: 'Credenciales incorrectas' };
                     }
                 },
-                
+
                 logout: () => {
                     usuario = null;
                     localStorage.removeItem('usuario');
                 },
-                
+
                 getUsuario: () => {
                     if (!usuario) {
                         const usuarioStorage = localStorage.getItem('usuario');
@@ -513,7 +581,7 @@
                     }
                     return usuario;
                 },
-                
+
                 estaAutenticado: () => {
                     return this.getUsuario() !== null;
                 }
@@ -523,42 +591,42 @@
         // Servicio de Productos (Product Service) - Singleton
         const ProductService = (() => {
             let instance;
-            
+
             function init() {
                 const productos = [
-                    { 
-                        id: 1, 
-                        nombre: "Iphone 17 Pro", 
+                    {
+                        id: 1,
+                        nombre: "Iphone 17 Pro",
                         precio: 5999000,
                         precioOriginal: 6500000,
                         imagen: "https://co.tiendasishop.com/cdn/shop/files/IMG-18067830_m_jpeg_1_ae6c1c05-e8de-40b8-b0cc-9e8ff95c9ab6.jpg?v=1757469574&width=823"
                     },
-                    { 
-                        id: 2, 
-                        nombre: "Auriculares Inalámbricos", 
+                    {
+                        id: 2,
+                        nombre: "Auriculares Inalámbricos",
                         precio: 239000,
                         imagen: "https://exitocol.vtexassets.com/arquivos/ids/24975256/audifonos-inalambricos-bluetooth-over-ear-diadema-estereo-p9-plateado.jpg?v=638639410899930000"
                     },
-                    { 
-                        id: 3, 
-                        nombre: "Smartwatch Pro", 
+                    {
+                        id: 3,
+                        nombre: "Smartwatch Pro",
                         precio: 179000,
                         imagen: "https://micelu.co/wp-content/uploads/2024/08/SMART-WATCH-S1-A.png"
                     },
-                    { 
-                        id: 4, 
-                        nombre: "Camiseta Lacoste", 
+                    {
+                        id: 4,
+                        nombre: "Camiseta Lacoste",
                         precio: 320000,
                         imagen: "https://img01.ztat.net/article/spp-media-p1/b423bfaa440240af8efac869017a5780/b6db73aaa73a4085b8c11d4e205eaed3.jpg?imwidth=762"
                     }
                 ];
-                
+
                 return {
                     listar: () => productos,
                     buscar: (id) => productos.find(p => p.id === id)
                 };
             }
-            
+
             return {
                 getInstance: () => {
                     if (!instance) {
@@ -573,11 +641,11 @@
         const CartService = (() => {
             let carrito = [];
             let observers = [];
-            
+
             const notificarObservers = () => {
                 observers.forEach(observer => observer(carrito));
             };
-            
+
             // Cargar carrito desde localStorage
             const cargarCarrito = () => {
                 const carritoStorage = localStorage.getItem('carrito');
@@ -585,19 +653,19 @@
                     carrito = JSON.parse(carritoStorage);
                 }
             };
-            
+
             // Guardar carrito en localStorage
             const guardarCarrito = () => {
                 localStorage.setItem('carrito', JSON.stringify(carrito));
             };
-            
+
             // Inicializar cargado
             cargarCarrito();
-            
+
             return {
                 agregar: (producto) => {
                     const itemExistente = carrito.find(item => item.id === producto.id);
-                    
+
                     if (itemExistente) {
                         itemExistente.cantidad += 1;
                     } else {
@@ -607,17 +675,17 @@
                             fechaAgregado: new Date().toISOString()
                         });
                     }
-                    
+
                     guardarCarrito();
                     notificarObservers();
                 },
-                
+
                 eliminar: (id) => {
                     carrito = carrito.filter(item => item.id !== id);
                     guardarCarrito();
                     notificarObservers();
                 },
-                
+
                 actualizarCantidad: (id, cantidad) => {
                     const item = carrito.find(item => item.id === id);
                     if (item) {
@@ -630,19 +698,19 @@
                         }
                     }
                 },
-                
+
                 listar: () => [...carrito],
-                
+
                 vaciar: () => {
                     carrito = [];
                     guardarCarrito();
                     notificarObservers();
                 },
-                
+
                 obtenerTotal: () => carrito.reduce((total, item) => total + (item.precio * item.cantidad), 0),
-                
+
                 obtenerCantidadTotal: () => carrito.reduce((total, item) => total + item.cantidad, 0),
-                
+
                 suscribir: (observer) => {
                     observers.push(observer);
                     observer(carrito); // Notificar estado actual
@@ -673,7 +741,7 @@
                         }
                     }
                 };
-                
+
                 return procesadores[tipo] || procesadores.efectivo;
             }
         };
@@ -681,20 +749,20 @@
         // =====================
         // Inicialización de la aplicación
         // =====================
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Inicializar AOS
             AOS.init({
                 duration: 800,
                 easing: 'ease-in-out',
                 once: true
             });
-            
+
             // Inicializar Feather Icons
             feather.replace();
-            
+
             // Obtener instancias de servicios
             const productService = ProductService.getInstance();
-            
+
             // Elementos del DOM
             const loginModal = document.getElementById('loginModal');
             const cartModal = document.getElementById('cartModal');
@@ -713,10 +781,10 @@
             const actualizarInterfazCarrito = (carrito) => {
                 const cantidadTotal = CartService.obtenerCantidadTotal();
                 const total = CartService.obtenerTotal();
-                
+
                 // Actualizar badge del carrito
                 document.querySelector('.cart-badge').textContent = cantidadTotal;
-                
+
                 // Actualizar modal del carrito
                 if (carrito.length === 0) {
                     emptyCart.classList.remove('hidden');
@@ -725,7 +793,7 @@
                 } else {
                     emptyCart.classList.add('hidden');
                     checkoutBtn.disabled = false;
-                    
+
                     cartItems.innerHTML = carrito.map(item => `
                         <div class="flex items-center justify-between border-b pb-4">
                             <div class="flex items-center space-x-3">
@@ -748,13 +816,13 @@
                             </button>
                         </div>
                     `).join('');
-                    
+
                     feather.replace();
                 }
-                
+
                 // Actualizar total y envío
                 cartTotal.textContent = `$${total.toLocaleString()}`;
-                
+
                 if (total > 250000) {
                     shippingInfo.classList.remove('hidden');
                 } else {
@@ -806,14 +874,14 @@
                 e.preventDefault();
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
-                
+
                 const resultado = AuthService.login(email, password);
-                
+
                 if (resultado.exito) {
                     alert(`¡Bienvenido ${resultado.usuario.nombre}!`);
                     loginModal.style.display = 'none';
                     loginForm.reset();
-                    
+
                     // Actualizar ícono de usuario
                     loginButton.innerHTML = '<i data-feather="user-check" class="text-green-600"></i>';
                     feather.replace();
@@ -830,38 +898,38 @@
                     loginModal.style.display = 'block';
                     return;
                 }
-                
+
                 const carrito = CartService.listar();
                 if (carrito.length === 0) {
                     alert('Tu carrito está vacío');
                     return;
                 }
-                
+
                 const total = CartService.obtenerTotal();
                 let metodoPago = 'efectivo';
-                
+
                 if (total > 1000000) {
                     metodoPago = 'paypal';
                 } else if (total > 500000) {
                     metodoPago = 'stripe';
                 }
-                
+
                 const procesador = PaymentFactory.crearProcesador(metodoPago);
                 const resultado = procesador.procesar(total, usuario);
-                
+
                 let mensaje = `✅ Compra realizada con éxito!\n\n${resultado}\n\n`;
                 mensaje += `📦 Productos comprados (${CartService.obtenerCantidadTotal()} items):\n`;
-                
+
                 carrito.forEach(item => {
                     mensaje += `• ${item.nombre} x${item.cantidad} - $${(item.precio * item.cantidad).toLocaleString()}\n`;
                 });
-                
+
                 if (total > 250000) {
                     mensaje += '\n🚚 ¡Envío gratis aplicado!';
                 }
-                
+
                 alert(mensaje);
-                
+
                 // Vaciar carrito después de la compra
                 CartService.vaciar();
                 cartModal.style.display = 'none';
@@ -869,20 +937,20 @@
 
             // Configurar event listeners para los botones de agregar al carrito
             document.querySelectorAll('.add-to-cart').forEach(button => {
-                button.addEventListener('click', function(e) {
+                button.addEventListener('click', function (e) {
                     e.preventDefault();
                     const productId = parseInt(this.getAttribute('data-id'));
                     const producto = productService.buscar(productId);
-                    
+
                     if (producto) {
                         CartService.agregar(producto);
-                        
+
                         // Efecto visual de confirmación
                         this.classList.add('added');
                         const originalHTML = this.innerHTML;
                         this.innerHTML = '<i data-feather="check" class="w-5 h-5"></i>';
                         feather.replace();
-                        
+
                         setTimeout(() => {
                             this.classList.remove('added');
                             this.innerHTML = originalHTML;
@@ -891,9 +959,9 @@
                     }
                 });
             });
-            
+
             // Botón comprar ahora del Hero
-            document.getElementById('comprarAhoraHero').addEventListener('click', function() {
+            document.getElementById('comprarAhoraHero').addEventListener('click', function () {
                 const productosPopulares = [1, 2];
                 productosPopulares.forEach(id => {
                     const producto = productService.buscar(id);
@@ -903,9 +971,9 @@
                 });
                 cartModal.style.display = 'block';
             });
-            
+
             // Botón comprar ahora del Banner
-            document.getElementById('comprarAhoraBanner').addEventListener('click', function() {
+            document.getElementById('comprarAhoraBanner').addEventListener('click', function () {
                 cartModal.style.display = 'block';
             });
 
@@ -918,4 +986,5 @@
         });
     </script>
 </body>
+
 </html>
