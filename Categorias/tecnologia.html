@@ -64,16 +64,14 @@
             background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
             border: 1px solid #e2e8f0;
         }
-        .specs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        .spec-item {
-            @apply bg-blue-50 p-3 rounded-lg text-center;
-        }
-        .discount-badge {
-            background: linear-gradient(45deg, #ef4444, #f59e0b);
+        .marketplace-badge {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            display: inline-block;
+            margin-top: 0.25rem;
         }
     </style>
 </head>
@@ -121,9 +119,7 @@
                 </button>
             </div>
             <div class="p-6 max-h-96 overflow-y-auto">
-                <div id="cartItems" class="space-y-4">
-                    <!-- Los items del carrito se cargarán aquí dinámicamente -->
-                </div>
+                <div id="cartItems" class="space-y-4"></div>
                 <div id="emptyCart" class="text-center py-8">
                     <i data-feather="shopping-cart" class="w-16 h-16 text-gray-300 mx-auto mb-4"></i>
                     <p class="text-gray-500">Tu carrito está vacío</p>
@@ -150,15 +146,15 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="#" class="flex items-center">
+                    <a href="../index.html" class="flex items-center">
                         <i data-feather="cpu" class="text-blue-600"></i>
                         <span class="ml-2 text-xl font-bold text-gray-900">TechNexus</span>
                     </a>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="../index.html" class="text-gray-700 hover:text-blue-600 transition">Inicio</a>
-                    <a href="../Otros/productos.html" class="text-gray-700 hover:text-blue-600 transition">Productos</a>
-                    <a href="#" class="text-gray-700 hover:text-blue-600 transition">Ofertas</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600 transition">Productos</a>
+                    <a href="../publicar.html" class="text-gray-700 hover:text-blue-600 transition">Publicar</a>
                     <a href="../Otros/contacto.html" class="text-gray-700 hover:text-blue-600 transition">Soporte</a>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -172,9 +168,6 @@
                     <button id="loginButton" class="p-2 rounded-full hover:bg-gray-100">
                         <i data-feather="user" class="text-gray-600"></i>
                     </button>
-                    <button class="md:hidden p-2 rounded-full hover:bg-gray-100">
-                        <i data-feather="menu" class="text-gray-600"></i>
-                    </button>
                 </div>
             </div>
         </div>
@@ -186,7 +179,7 @@
             <div class="flex flex-col md:flex-row items-center">
                 <div class="md:w-1/2 mb-10 md:mb-0" data-aos="fade-right">
                     <h1 class="text-4xl md:text-5xl font-bold mb-4">Tecnología de Vanguardia</h1>
-                    <p class="text-xl mb-8">Descubre los últimos dispositivos y gadgets tecnológicos para potenciar tu vida digital.</p>
+                    <p class="text-xl mb-8">Descubre los últimos dispositivos y productos publicados por la comunidad.</p>
                     <button class="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg" id="comprarAhoraHero">
                         Explorar productos
                     </button>
@@ -198,36 +191,11 @@
         </div>
     </section>
 
-    <!-- Featured Categories -->
-    <section class="py-10 bg-white">
-        <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
-            <h2 class="text-3xl font-bold text-center mb-13">Categorías Tecnológicas</h2>
-        </div>
-    </section>
-
     <!-- Category Filters -->
     <section class="py-8 bg-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-wrap gap-2 justify-center">
-                <button class="category-filter active px-4 py-2 rounded-full bg-blue-600 text-white" data-category="all">
-                    Todos
-                </button>
-                <button class="category-filter px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-200" data-category="smartphones">
-                    Smartphones
-                </button>
-                <button class="category-filter px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-200" data-category="laptops">
-                    Laptops
-                </button>
-                <button class="category-filter px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-200" data-category="audio">
-                    Audio
-                </button>
-                <button class="category-filter px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-200" data-category="wearables">
-                    Wearables
-                </button>
-                <button class="category-filter px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-200" data-category="accesorios">
-                    Accesorios
-                </button>
-            </div>
+            <h2 class="text-2xl font-bold text-center mb-4">Productos de Tecnología</h2>
+            <p class="text-center text-gray-600 mb-6">Incluye productos de la tienda y publicados por usuarios</p>
         </div>
     </section>
 
@@ -235,123 +203,23 @@
     <section class="py-16 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-12">
-                <h2 class="text-3xl font-bold">Productos Destacados</h2>
-                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Ver todos →</a>
+                <h2 class="text-3xl font-bold">Productos Disponibles</h2>
+                <a href="../publicar.html" class="text-blue-600 hover:text-blue-800 font-medium">Publicar producto →</a>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" id="productsContainer">
-                <!-- Los productos se cargarán dinámicamente aquí -->
-            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" id="productsContainer"></div>
         </div>
     </section>
 
-    
     <!-- Banner -->
     <section class="py-16 bg-blue-600 text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold mb-4" data-aos="fade-up">¡Hasta 40% de descuento en tecnología!</h2>
-            <p class="text-xl mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">Aprovecha nuestras ofertas especiales en smartphones, laptops y más.</p>
-            <button class="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg" data-aos="fade-up" data-aos-delay="200" id="comprarAhoraBanner">
-                Ver Ofertas
-            </button>
+            <h2 class="text-3xl font-bold mb-4">¿Tienes tecnología para vender?</h2>
+            <p class="text-xl mb-8">Publica tus productos tecnológicos de forma gratuita</p>
+            <a href="../publicar.html" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg inline-block">
+                Publicar Ahora
+            </a>
         </div>
     </section>
-    
-
-    <!-- Testimonials -->
-    <section class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12">Lo que dicen nuestros clientes</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-gray-50 p-6 rounded-lg" data-aos="fade-up">
-                    <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">"Excelente servicio y productos de alta calidad. Mi nuevo smartphone superó todas mis expectativas."</p>
-                    <div class="flex items-center">
-                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Cliente" class="w-10 h-10 rounded-full mr-3">
-                        <div>
-                            <h4 class="font-medium">Laura Martínez</h4>
-                            <p class="text-gray-500 text-sm">Cliente desde 2023</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg" data-aos="fade-up" data-aos-delay="100">
-                    <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">"La laptop que compré es perfecta para mi trabajo. Rápida, ligera y con una batería que dura todo el día."</p>
-                    <div class="flex items-center">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Cliente" class="w-10 h-10 rounded-full mr-3">
-                        <div>
-                            <h4 class="font-medium">Carlos Rodríguez</h4>
-                            <p class="text-gray-500 text-sm">Cliente desde 2022</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg" data-aos="fade-up" data-aos-delay="200">
-                    <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            <i data-feather="star" class="w-4 h-4 fill-current text-gray-300"></i>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">"Buenos precios y entrega rápida. El único detalle fue que el cargador no era el original."</p>
-                    <div class="flex items-center">
-                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Cliente" class="w-10 h-10 rounded-full mr-3">
-                        <div>
-                            <h4 class="font-medium">Ana García</h4>
-                            <p class="text-gray-500 text-sm">Cliente desde 2023</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
- <section class="py-14 bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
-      
-      <a href="Hogar.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="100">
-        <div class="bg-green-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-          <i data-feather="home" class="text-green-600"></i>
-        </div>
-        <h3 class="font-medium">Hogar</h3>
-      </a>
-
-      <a href="moda.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="200">
-        <div class="bg-blue-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-          <i data-feather="shopping-bag" class="text-blue-600"></i>
-        </div>
-        <h3 class="font-medium">Moda</h3>
-      </a>
-
-      <a href="belleza.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="300">
-        <div class="bg-yellow-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-          <i data-feather="heart" class="text-yellow-600"></i>
-        </div>
-        <h3 class="font-medium">Belleza</h3>
-      </a>
-
-    </div>
-  </div>
-</section>
-
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white pt-16 pb-8">
@@ -362,15 +230,14 @@
                         <i data-feather="cpu" class="text-blue-400"></i>
                         <span class="ml-2 text-xl font-bold">TechNexus</span>
                     </a>
-                    <p class="text-gray-400">Tu destino para la tecnología más avanzada y los mejores gadgets del mercado.</p>
+                    <p class="text-gray-400">Tu destino para la tecnología más avanzada.</p>
                 </div>
                 <div>
-                    <h3 class="font-bold text-lg mb-4">Compañía</h3>
+                    <h3 class="font-bold text-lg mb-4">Categorías</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Sobre nosotros</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Trabaja con nosotros</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Blog Tech</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Prensa</a></li>
+                        <li><a href="hogar.html" class="text-gray-400 hover:text-white transition">Hogar</a></li>
+                        <li><a href="moda.html" class="text-gray-400 hover:text-white transition">Moda</a></li>
+                        <li><a href="belleza.html" class="text-gray-400 hover:text-white transition">Belleza</a></li>
                     </ul>
                 </div>
                 <div>
@@ -378,8 +245,6 @@
                     <ul class="space-y-2">
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Centro de ayuda</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Garantías</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Política de privacidad</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Devoluciones</a></li>
                     </ul>
                 </div>
                 <div>
@@ -387,7 +252,6 @@
                     <ul class="space-y-2">
                         <li class="text-gray-400">📞 +57 1 234 5678</li>
                         <li class="text-gray-400">✉️ soporte@technexus.com</li>
-                        <li class="text-gray-400">📍 Bogotá, Colombia</li>
                     </ul>
                 </div>
             </div>
@@ -399,16 +263,35 @@
 
     <script>
         // =====================
+        // CARGAR PRODUCTOS DEL MARKETPLACE
+        // =====================
+        function cargarProductosDeMarketplace(categoriaFiltro) {
+            const productosMarketplace = JSON.parse(localStorage.getItem('marketplace')) || [];
+            
+            return productosMarketplace
+                .filter(p => p.categoria === categoriaFiltro)
+                .map((p, index) => ({
+                    id: 1000 + index,
+                    nombre: p.titulo,
+                    precio: parseInt(p.precio),
+                    categoria: 'marketplace',
+                    imagen: p.imagenes && p.imagenes.length ? p.imagenes[0] : 'https://via.placeholder.com/500',
+                    descripcion: p.descripcion || 'Producto publicado por usuario',
+                    especificaciones: [],
+                    esDelMarketplace: true
+                }));
+        }
+
+        const productosMarketplace = cargarProductosDeMarketplace('Tecnología');
+
+        // =====================
         // Servicios SOA
         // =====================
-
-        // Servicio de Autenticación (Auth Service)
         const AuthService = (() => {
             let usuario = null;
             
             return {
                 login: (email, password) => {
-                    // Simulación de autenticación
                     const usuariosValidos = [
                         { email: 'usuario@technexus.com', password: '123456', nombre: 'Usuario Demo' },
                         { email: 'admin@technexus.com', password: 'admin123', nombre: 'Administrador' }
@@ -448,12 +331,11 @@
             };
         })();
 
-        // Servicio de Productos (Product Service) - Singleton
         const ProductService = (() => {
             let instance;
             
             function init() {
-                const productos = [
+                const productosBase = [
                     { 
                         id: 1, 
                         nombre: "iPhone 15 Pro Max", 
@@ -461,7 +343,7 @@
                         precioOriginal: 6999000,
                         categoria: "smartphones",
                         imagen: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                        descripcion: "El smartphone más avanzado con chip A17 Pro y cámara de 48MP",
+                        descripcion: "El smartphone más avanzado con chip A17 Pro",
                         especificaciones: ["Pantalla 6.7\"", "Chip A17 Pro", "Cámara 48MP", "5G"]
                     },
                     { 
@@ -470,66 +352,13 @@
                         precio: 12999000,
                         categoria: "laptops",
                         imagen: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                        descripcion: "Laptop profesional con chip M3 para máximo rendimiento",
-                        especificaciones: ["Chip M3", "16GB RAM", "512GB SSD", "Pantalla Liquid Retina XDR"]
-                    },
-                    { 
-                        id: 3, 
-                        nombre: "Samsung Galaxy S24 Ultra", 
-                        precio: 4999000,
-                        precioOriginal: 5999000,
-                        categoria: "smartphones",
-                        imagen: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                        descripcion: "Smartphone con S-Pen y cámara de 200MP",
-                        especificaciones: ["Pantalla 6.8\"", "Snapdragon 8 Gen 3", "Cámara 200MP", "S-Pen incluido"]
-                    },
-                    { 
-                        id: 4, 
-                        nombre: "Sony WH-1000XM5", 
-                        precio: 1299000,
-                        categoria: "audio",
-                        imagen: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                        descripcion: "Audífonos noise cancelling de última generación",
-                        especificaciones: ["Cancelación activa de ruido", "30h batería", "Carga rápida", "Asistente de voz"]
-                    },
-                    { 
-                        id: 5, 
-                        nombre: "Apple Watch Series 9", 
-                        precio: 2399000,
-                        categoria: "wearables",
-                        imagen: "https://images.unsplash.com/photo-1579586337278-3fbd9e1a37b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                        descripcion: "Smartwatch con monitorización avanzada de salud",
-                        especificaciones: ["Pantalla Retina", "ECG", "Oxímetro", "Resistente al agua"]
-                    },
-                    { 
-                        id: 6, 
-                        nombre: "Dell XPS 13", 
-                        precio: 5999000,
-                        precioOriginal: 6999000,
-                        categoria: "laptops",
-                        imagen: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                        descripcion: "Laptop ultraportátil con pantalla InfinityEdge",
-                        especificaciones: ["Intel Core i7", "16GB RAM", "512GB SSD", "Pantalla 13.4\""]
-                    },
-                    { 
-                        id: 7, 
-                        nombre: "AirPods Pro 2", 
-                        precio: 1299000,
-                        categoria: "audio",
-                        imagen: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                        descripcion: "Audífonos inalámbricos con cancelación activa de ruido",
-                        especificaciones: ["Cancelación activa", "Carga MagSafe", "6h batería", "Resistente al agua"]
-                    },
-                    { 
-                        id: 8, 
-                        nombre: "Cargador Magsafe Duo", 
-                        precio: 299000,
-                        categoria: "accesorios",
-                        imagen: "https://images.unsplash.com/photo-1609592810794-3cbcb1ef2ff3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                        descripcion: "Cargador dual para iPhone y Apple Watch",
-                        especificaciones: ["Compatible MagSafe", "Carga rápida", "Diseño plegable", "Incluye cable USB-C"]
+                        descripcion: "Laptop profesional con chip M3",
+                        especificaciones: ["Chip M3", "16GB RAM", "512GB SSD"]
                     }
                 ];
+                
+                // COMBINAR productos base + marketplace
+                const productos = [...productosBase, ...productosMarketplace];
                 
                 return {
                     listar: () => productos,
@@ -551,7 +380,6 @@
             };
         })();
 
-        // Servicio de Carrito (Cart Service) con Observer
         const CartService = (() => {
             let carrito = [];
             let observers = [];
@@ -560,7 +388,6 @@
                 observers.forEach(observer => observer(carrito));
             };
             
-            // Cargar carrito desde localStorage
             const cargarCarrito = () => {
                 const carritoStorage = localStorage.getItem('carrito');
                 if (carritoStorage) {
@@ -568,12 +395,10 @@
                 }
             };
             
-            // Guardar carrito en localStorage
             const guardarCarrito = () => {
                 localStorage.setItem('carrito', JSON.stringify(carrito));
             };
             
-            // Inicializar cargado
             cargarCarrito();
             
             return {
@@ -614,119 +439,50 @@
                 },
                 
                 listar: () => [...carrito],
-                
                 vaciar: () => {
                     carrito = [];
                     guardarCarrito();
                     notificarObservers();
                 },
-                
                 obtenerTotal: () => carrito.reduce((total, item) => total + (item.precio * item.cantidad), 0),
-                
                 obtenerCantidadTotal: () => carrito.reduce((total, item) => total + item.cantidad, 0),
-                
                 suscribir: (observer) => {
                     observers.push(observer);
-                    observer(carrito); // Notificar estado actual
+                    observer(carrito);
                 }
             };
         })();
 
-        // Servicio de Pagos (Payment Service) con Factory
-        const PaymentFactory = {
-            crearProcesador: (tipo) => {
-                const procesadores = {
-                    paypal: {
-                        nombre: "PayPal",
-                        procesar: (monto, usuario) => {
-                            return `Pago de $${monto.toLocaleString()} procesado con PayPal\nUsuario: ${usuario.nombre}`;
-                        }
-                    },
-                    stripe: {
-                        nombre: "Stripe",
-                        procesar: (monto, usuario) => {
-                            return `Pago de $${monto.toLocaleString()} procesado con Stripe\nUsuario: ${usuario.nombre}`;
-                        }
-                    },
-                    efectivo: {
-                        nombre: "Efectivo",
-                        procesar: (monto, usuario) => {
-                            return `Pago de $${monto.toLocaleString()} procesado en efectivo\nUsuario: ${usuario.nombre}`;
-                        }
-                    }
-                };
-                
-                return procesadores[tipo] || procesadores.efectivo;
-            }
-        };
-
         // =====================
-        // Inicialización de la aplicación
+        // Inicialización
         // =====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar AOS
-            AOS.init({
-                duration: 800,
-                easing: 'ease-in-out',
-                once: true
-            });
-            
-            // Inicializar Feather Icons
+            AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
             feather.replace();
             
-            // Obtener instancias de servicios
             const productService = ProductService.getInstance();
-            
-            // Elementos del DOM
-            const loginModal = document.getElementById('loginModal');
-            const cartModal = document.getElementById('cartModal');
-            const loginButton = document.getElementById('loginButton');
-            const cartButton = document.getElementById('cartButton');
-            const closeLogin = document.getElementById('closeLogin');
-            const closeCart = document.getElementById('closeCart');
-            const loginForm = document.getElementById('loginForm');
-            const cartItems = document.getElementById('cartItems');
-            const emptyCart = document.getElementById('emptyCart');
-            const cartTotal = document.getElementById('cartTotal');
-            const shippingInfo = document.getElementById('shippingInfo');
-            const checkoutBtn = document.getElementById('checkoutBtn');
             const productsContainer = document.getElementById('productsContainer');
-            const categoryFilters = document.querySelectorAll('.category-filter');
 
-            // Función para renderizar productos
             const renderizarProductos = (productos) => {
                 productsContainer.innerHTML = productos.map(producto => `
-                    <div class="product-card tech-card rounded-lg overflow-hidden shadow-md transition duration-300" data-aos="fade-up" data-category="${producto.categoria}">
+                    <div class="product-card tech-card rounded-lg overflow-hidden shadow-md transition duration-300" data-aos="fade-up">
                         <div class="relative">
                             <img src="${producto.imagen}" alt="${producto.nombre}" class="w-full h-48 object-cover">
-                            ${producto.precioOriginal ? `
-                                <span class="discount-badge absolute top-2 right-2 text-white text-xs px-2 py-1 rounded">
-                                    -${Math.round((1 - producto.precio/producto.precioOriginal) * 100)}%
+                            ${producto.esDelMarketplace ? `
+                                <span class="absolute top-2 left-2 marketplace-badge">
+                                    📦 Marketplace
                                 </span>
                             ` : ''}
-                            ${!producto.precioOriginal && producto.categoria === 'nuevo' ? `
-                                <span class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">Nuevo</span>
+                            ${producto.precioOriginal ? `
+                                <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                                    -${Math.round((1 - producto.precio/producto.precioOriginal) * 100)}%
+                                </span>
                             ` : ''}
                         </div>
                         <div class="p-4">
                             <h3 class="font-medium text-gray-900 mb-1">${producto.nombre}</h3>
                             <p class="text-gray-500 text-sm mb-2">${producto.descripcion}</p>
-                            <div class="flex flex-wrap gap-1 mb-2">
-                                ${producto.especificaciones.map(spec => `
-                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${spec}</span>
-                                `).join('')}
-                            </div>
-                            <div class="flex items-center mb-2">
-                                <div class="flex text-yellow-400">
-                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                    <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                                </div>
-                                <span class="text-gray-500 text-xs ml-1">(${Math.floor(Math.random() * 100) + 50})</span>
-                            </div>
-                            <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center mt-4">
                                 <div>
                                     ${producto.precioOriginal ? `
                                         <span class="text-gray-500 line-through text-sm">$${producto.precioOriginal.toLocaleString()}</span>
@@ -741,10 +497,8 @@
                     </div>
                 `).join('');
                 
-                // Reemplazar íconos feather
                 feather.replace();
                 
-                // Configurar event listeners para los botones de agregar al carrito
                 document.querySelectorAll('.add-to-cart').forEach(button => {
                     button.addEventListener('click', function(e) {
                         e.preventDefault();
@@ -753,8 +507,6 @@
                         
                         if (producto) {
                             CartService.agregar(producto);
-                            
-                            // Efecto visual de confirmación
                             this.classList.add('added');
                             const originalHTML = this.innerHTML;
                             this.innerHTML = '<i data-feather="check" class="w-5 h-5"></i>';
@@ -770,15 +522,16 @@
                 });
             };
 
-            // Función para actualizar la interfaz de usuario del carrito
             const actualizarInterfazCarrito = (carrito) => {
                 const cantidadTotal = CartService.obtenerCantidadTotal();
                 const total = CartService.obtenerTotal();
                 
-                // Actualizar badge del carrito
                 document.querySelector('.cart-badge').textContent = cantidadTotal;
                 
-                // Actualizar modal del carrito
+                const cartItems = document.getElementById('cartItems');
+                const emptyCart = document.getElementById('emptyCart');
+                const checkoutBtn = document.getElementById('checkoutBtn');
+                
                 if (carrito.length === 0) {
                     emptyCart.classList.remove('hidden');
                     cartItems.innerHTML = '';
@@ -813,159 +566,28 @@
                     feather.replace();
                 }
                 
-                // Actualizar total y envío
-                cartTotal.textContent = `$${total.toLocaleString()}`;
+                document.getElementById('cartTotal').textContent = `$${total.toLocaleString()}`;
                 
                 if (total > 2000000) {
-                    shippingInfo.classList.remove('hidden');
+                    document.getElementById('shippingInfo').classList.remove('hidden');
                 } else {
-                    shippingInfo.classList.add('hidden');
+                    document.getElementById('shippingInfo').classList.add('hidden');
                 }
             };
 
-            // Funciones globales para los botones del carrito
-            window.eliminarDelCarrito = (id) => {
-                CartService.eliminar(id);
-            };
+            window.eliminarDelCarrito = (id) => CartService.eliminar(id);
+            window.actualizarCantidad = (id, nuevaCantidad) => CartService.actualizarCantidad(id, nuevaCantidad);
 
-            window.actualizarCantidad = (id, nuevaCantidad) => {
-                CartService.actualizarCantidad(id, nuevaCantidad);
-            };
-
-            // Configurar Observer para el carrito
             CartService.suscribir(actualizarInterfazCarrito);
 
-            // Event Listeners para modales
-            loginButton.addEventListener('click', () => {
-                loginModal.style.display = 'block';
+            document.getElementById('cartButton').addEventListener('click', () => {
+                document.getElementById('cartModal').style.display = 'block';
             });
 
-            cartButton.addEventListener('click', () => {
-                cartModal.style.display = 'block';
+            document.getElementById('closeCart').addEventListener('click', () => {
+                document.getElementById('cartModal').style.display = 'none';
             });
 
-            closeLogin.addEventListener('click', () => {
-                loginModal.style.display = 'none';
-            });
-
-            closeCart.addEventListener('click', () => {
-                cartModal.style.display = 'none';
-            });
-
-            // Cerrar modales al hacer clic fuera
-            window.addEventListener('click', (e) => {
-                if (e.target === loginModal) {
-                    loginModal.style.display = 'none';
-                }
-                if (e.target === cartModal) {
-                    cartModal.style.display = 'none';
-                }
-            });
-
-            // Login Form
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                
-                const resultado = AuthService.login(email, password);
-                
-                if (resultado.exito) {
-                    alert(`¡Bienvenido ${resultado.usuario.nombre}!`);
-                    loginModal.style.display = 'none';
-                    loginForm.reset();
-                    
-                    // Actualizar ícono de usuario
-                    loginButton.innerHTML = '<i data-feather="user-check" class="text-green-600"></i>';
-                    feather.replace();
-                } else {
-                    alert('Error: ' + resultado.error);
-                }
-            });
-
-            // Checkout
-            checkoutBtn.addEventListener('click', () => {
-                const usuario = AuthService.getUsuario();
-                if (!usuario) {
-                    alert('Por favor inicia sesión para continuar con la compra');
-                    loginModal.style.display = 'block';
-                    return;
-                }
-                
-                const carrito = CartService.listar();
-                if (carrito.length === 0) {
-                    alert('Tu carrito está vacío');
-                    return;
-                }
-                
-                const total = CartService.obtenerTotal();
-                let metodoPago = 'efectivo';
-                
-                if (total > 3000000) {
-                    metodoPago = 'paypal';
-                } else if (total > 1500000) {
-                    metodoPago = 'stripe';
-                }
-                
-                const procesador = PaymentFactory.crearProcesador(metodoPago);
-                const resultado = procesador.procesar(total, usuario);
-                
-                let mensaje = `✅ Compra realizada con éxito!\n\n${resultado}\n\n`;
-                mensaje += `📦 Productos comprados (${CartService.obtenerCantidadTotal()} items):\n`;
-                
-                carrito.forEach(item => {
-                    mensaje += `• ${item.nombre} x${item.cantidad} - $${(item.precio * item.cantidad).toLocaleString()}\n`;
-                });
-                
-                if (total > 2000000) {
-                    mensaje += '\n🚚 ¡Envío gratis aplicado!';
-                }
-                
-                alert(mensaje);
-                
-                // Vaciar carrito después de la compra
-                CartService.vaciar();
-                cartModal.style.display = 'none';
-            });
-
-            // Filtros de categoría
-            categoryFilters.forEach(filter => {
-                filter.addEventListener('click', function() {
-                    // Remover clase active de todos los filtros
-                    categoryFilters.forEach(f => f.classList.remove('active', 'bg-blue-600', 'text-white'));
-                    categoryFilters.forEach(f => f.classList.add('bg-white', 'text-gray-700'));
-                    
-                    // Agregar clase active al filtro seleccionado
-                    this.classList.remove('bg-white', 'text-gray-700');
-                    this.classList.add('active', 'bg-blue-600', 'text-white');
-                    
-                    const categoria = this.getAttribute('data-category');
-                    const productos = productService.filtrarPorCategoria(categoria);
-                    renderizarProductos(productos);
-                });
-            });
-            
-            // Botón comprar ahora del Hero
-            document.getElementById('comprarAhoraHero').addEventListener('click', function() {
-                // Desplazarse a la sección de productos
-                document.getElementById('productsContainer').scrollIntoView({ behavior: 'smooth' });
-            });
-            
-            // Botón comprar ahora del Banner
-            document.getElementById('comprarAhoraBanner').addEventListener('click', function() {
-                const productosOfertas = productService.filtrarPorCategoria('all').filter(p => p.precioOriginal);
-                renderizarProductos(productosOfertas);
-                document.getElementById('productsContainer').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            // Verificar si hay usuario logueado al cargar la página
-            const usuario = AuthService.getUsuario();
-            if (usuario) {
-                loginButton.innerHTML = '<i data-feather="user-check" class="text-green-600"></i>';
-                feather.replace();
-            }
-
-            // Cargar productos iniciales
             const productosIniciales = productService.listar();
             renderizarProductos(productosIniciales);
         });

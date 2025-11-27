@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusShop | Tienda Online</title>
@@ -9,10 +10,12 @@
 
     <!-- Supabase Configuration -->
     <script>
-        window.SUPABASE_CONFIG = {
-            URL: localStorage.getItem('supabase_url') || 'https://your-project.supabase.co',
-            ANON_KEY: localStorage.getItem('supabase_anon_key') || 'your_anon_public_key_here'
-        }
+        // Inicializar Supabase
+        const supabase = supabase.createClient(
+        "https://hzraktsyojpixifyrjxy.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmFrdHN5b2pwaXhpZnlyanh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwMjgxNDAsImV4cCI6MjA3OTYwNDE0MH0.Apn2zTl19tc2imif-i3GS6TY5nrMQMPWw7KMSGjbhUo"
+    );
+
     </script>
 
     <!-- Console Helper para Supabase -->
@@ -169,8 +172,8 @@
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="Otros/productos.html" class="text-gray-700 hover:text-indigo-600 transition">Productos</a>
                     <a href="#" class="text-gray-700 hover:text-indigo-600 transition">Ofertas</a>
+                    <a href="publicar.html" class="text-gray-700 hover:text-indigo-600 transition">Publicar</a></li>
                     <a href="Otros/contacto.html" class="text-gray-700 hover:text-indigo-600 transition">Contacto</a>
-                    <a href="login/register.html" class="text-gray-700 hover:text-indigo-600 transition">Registrarse</a>
                 </div>
                 <div class="flex items-center space-x-4">
                     <button class="p-2 rounded-full hover:bg-gray-100">
@@ -542,51 +545,48 @@
         // Servicios SOA
         // =====================
 
-        // Servicio de Autenticación (Auth Service)
-        const AuthService = (() => {
-            let usuario = null;
+        // Servicio de Autenticación real con Supabase
+const AuthService = (() => {
+
+    return {
+        login: async (email, password) => {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            if (error) {
+                return { exito: false, error: error.message };
+            }
+
+            // Guardar usuario simple en localStorage
+            localStorage.setItem("usuario", JSON.stringify({
+                email: data.user.email
+            }));
 
             return {
-                login: (email, password) => {
-                    // Simulación de autenticación
-                    const usuariosValidos = [
-                        { email: 'usuario@nexusshop.com', password: '123456', nombre: 'Usuario Demo' },
-                        { email: 'admin@nexusshop.com', password: 'admin123', nombre: 'Administrador' }
-                    ];
-
-                    const usuarioValido = usuariosValidos.find(u =>
-                        u.email === email && u.password === password
-                    );
-
-                    if (usuarioValido) {
-                        usuario = { ...usuarioValido };
-                        localStorage.setItem('usuario', JSON.stringify(usuario));
-                        return { exito: true, usuario: usuario };
-                    } else {
-                        return { exito: false, error: 'Credenciales incorrectas' };
-                    }
-                },
-
-                logout: () => {
-                    usuario = null;
-                    localStorage.removeItem('usuario');
-                },
-
-                getUsuario: () => {
-                    if (!usuario) {
-                        const usuarioStorage = localStorage.getItem('usuario');
-                        if (usuarioStorage) {
-                            usuario = JSON.parse(usuarioStorage);
-                        }
-                    }
-                    return usuario;
-                },
-
-                estaAutenticado: () => {
-                    return this.getUsuario() !== null;
-                }
+                exito: true,
+                usuario: { email: data.user.email, nombre: data.user.email }
             };
-        })();
+        },
+
+        logout: async () => {
+            await supabase.auth.signOut();
+            localStorage.removeItem("usuario");
+        },
+
+        getUsuario: () => {
+            const u = localStorage.getItem("usuario");
+            return u ? JSON.parse(u) : null;
+        },
+
+        estaAutenticado: () => {
+            const u = localStorage.getItem("usuario");
+            return !!u;
+        }
+            };
+    })();
+
 
         // Servicio de Productos (Product Service) - Singleton
         const ProductService = (() => {
@@ -985,6 +985,26 @@
             }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.js"></script>
+
+<script>
+const sb = supabase.createClient(
+  "https://hzraktsyojpixifyrjxy.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cmFrdHN5b2pwaXhpZnlyanh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwMjgxNDAsImV4cCI6MjA3OTYwNDE0MH0.Apn2zTl19tc2imif-i3GS6TY5nrMQMPWw7KMSGjbhUo"
+);
+
+// Ejemplo de login (prueba)
+async function testLogin() {
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: "usuario@prueba.com",
+    password: "123456"
+  });
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+}
+</script>
+
 </body>
 
 </html>
